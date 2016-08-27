@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-enum WorkSites { Pyramid, Farm, Fishing, Stones };
-
 struct Worker
 {
     private float _speed;
@@ -18,98 +16,123 @@ struct Worker
             _speed = value;
         }
     }
-    private bool _dead;
-    public bool dead
+    private float _foodConsumption;
+    public float foodConsumption
     {
         get
         {
-            return _dead;
+            return _foodConsumption;
         }
         set
         {
-            _dead = value;
+            _foodConsumption = value;
         }
     }
-    private WorkSites _worksite;
-    public WorkSites worksite
+
+
+    private GameObject _instance;
+    public GameObject instance
     {
         get
         {
-            return _worksite;
+            return _instance;
         }
         set
         {
-            _worksite = value;
+            _instance = value;
         }
     }
 }
 
 public class WorkerIndex : MonoBehaviour {
 
-    private List<Worker> workers = new List<Worker>();
-    public int numWorkers;
-    public int workersPyramid;
-    public int workersFarm;
+    private List<Worker> workersPyramid = new List<Worker>();
+    private List<Worker> workersFarm = new List<Worker>();
+    public int initialWorkers;
+    
 
     // Use this for initialization
     void Start() {
-        numWorkers = 3;
-        workersPyramid = 3;
+        initialWorkers = 3;
 
-        for (int i = 0; i < numWorkers; i++)
-        {
-            Worker worker = new Worker();
-            worker.dead = false;
-            worker.worksite = WorkSites.Pyramid;
-            worker.speed = Random.Range(0.3f, 1f);
-            workers.Add(worker);
-        }
+        CreateWorkers(initialWorkers);
     }
 
     // Update is called once per frame
     void Update() {
     }
 
+    private GameObject CreateInstance(Vector3 position, Quaternion rotation)
+    {
+        GameObject lemmingObject = (GameObject)Resources.Load("Prefabs/Lemming", typeof(GameObject));
+
+        GameObject instance = (GameObject)Instantiate(lemmingObject, position, rotation);
+        instance.transform.parent = GameObject.Find("Lemmings").transform;
+        return instance;
+    }
+
     public void CreateWorkers(int num)
     {
-        numWorkers += num;
-        workersPyramid += num;
+        for (int i = 0; i < num; i++)
+        {
+            Worker worker = new Worker();
+            worker.speed = Random.Range(0.3f, 1f);
+            worker.foodConsumption = Random.Range(0.01f, 0.5f);
+            worker.instance = CreateInstance(GetPyramidPosition(), transform.rotation);
+            workersPyramid.Add(worker);
+        }
     }
 
     public void SendToPyramid(int num)
     {
-        if (workersFarm - num >= 0)
-        { 
-            workersPyramid += num;
-            workersFarm -= num;
-        }
-        else
-        {
-            workersPyramid += workersFarm;
-            workersFarm = 0;
-        }
+        int n = (workersFarm.Count - num >= 0) ? num : workersFarm.Count;
+
+        List<Worker> farmWorkers = workersFarm.GetRange(0, n);
+        farmWorkers.ForEach(worker => {
+            worker.instance.transform.position = GetPyramidPosition();
+            workersFarm.Remove(worker);
+        });
+        workersPyramid.AddRange(farmWorkers);
     }
 
     public void SendToFarm(int num)
     {
-        if (workersPyramid - num >= 0)
-        {
-            workersFarm += num;
-            workersPyramid -= num;
-        }
-        else
-        {
-            workersFarm += workersPyramid;
-            workersPyramid = 0;
-        }
-        
+        int n = (workersPyramid.Count - num >= 0) ? num : workersPyramid.Count;
+
+        List<Worker> pyramidWorkers = workersPyramid.GetRange(0, n);
+        pyramidWorkers.ForEach(worker => {
+            worker.instance.transform.position = GetFarmPosition();
+            workersPyramid.Remove(worker);
+        });
+        workersFarm.AddRange(pyramidWorkers);
+    }
+
+    public Vector3 GetFarmPosition()
+    {
+        return new Vector3(Random.Range(-3.6f, -5f), 0f, 2f);
+    }
+
+    public Vector3 GetPyramidPosition()
+    {
+        return new Vector3(Random.Range(-2f, 2f), -2f, 2f);
+    }
+
+    public int NumWorkersPyramid()
+    {
+        return workersPyramid.Count;
+    }
+
+    public int NumWorkersFarm()
+    {
+        return workersFarm.Count;
     }
 
     public void Kill(int num)
     {
-        numWorkers -= num;
+        /*numWorkers -= num;
         float distr = Random.Range(0f, 1f);
         workersPyramid -= (int)(distr * num);
         workersFarm -= (int)((1f-distr) * num);
+        */
     }
 }

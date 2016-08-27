@@ -25,7 +25,7 @@ public class PyramidBuild : MonoBehaviour {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-        double speed = workerindex.workersPyramid * 0.01;
+        double speed = workerindex.NumWorkersPyramid() * 0.01;
 
         if (numLayers < maxLayers)
         {
