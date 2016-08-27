@@ -15,8 +15,7 @@ public class TimeCycle : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        speed = 2;
-        
+        speed = 2;   
 	}
 	
 	// Update is called once per frame

@@ -44,6 +44,8 @@ struct Worker
     }
 }
 
+public enum WorkSite { Pyramid, Farm };
+
 public class WorkerIndex : MonoBehaviour {
 
     private List<Worker> workersPyramid = new List<Worker>();
@@ -55,7 +57,7 @@ public class WorkerIndex : MonoBehaviour {
     void Start() {
         initialWorkers = 3;
 
-        CreateWorkers(initialWorkers);
+        CreateWorkers(initialWorkers, WorkSite.Farm);
     }
 
     // Update is called once per frame
@@ -71,15 +73,24 @@ public class WorkerIndex : MonoBehaviour {
         return instance;
     }
 
-    public void CreateWorkers(int num)
+    public void CreateWorkers(int num, WorkSite site)
     {
         for (int i = 0; i < num; i++)
         {
             Worker worker = new Worker();
             worker.speed = Random.Range(0.3f, 1f);
             worker.foodConsumption = Random.Range(0.01f, 0.5f);
-            worker.instance = CreateInstance(GetPyramidPosition(), transform.rotation);
-            workersPyramid.Add(worker);
+            switch (site)
+            {
+                case WorkSite.Farm:
+                    worker.instance = CreateInstance(GetFarmPosition(), transform.rotation);
+                    break;
+                case WorkSite.Pyramid:
+                    worker.instance = CreateInstance(GetPyramidPosition(), transform.rotation);
+                    break;
+            }
+            
+            workersFarm.Add(worker);
         }
     }
 
@@ -109,7 +120,7 @@ public class WorkerIndex : MonoBehaviour {
 
     public Vector3 GetFarmPosition()
     {
-        return new Vector3(Random.Range(-3.6f, -5f), 0f, 2f);
+        return new Vector3(Random.Range(-3f, -4f), Random.Range(2.6f, 3f), 2f);
     }
 
     public Vector3 GetPyramidPosition()
@@ -125,6 +136,15 @@ public class WorkerIndex : MonoBehaviour {
     public int NumWorkersFarm()
     {
         return workersFarm.Count;
+    }
+
+    internal List<Worker> GetAllWorkers()
+    {
+        List<Worker> allWorkers = new List<Worker>();
+        allWorkers.AddRange(workersFarm);
+        allWorkers.AddRange(workersPyramid);
+
+        return allWorkers;
     }
 
     public void Kill(int num)

@@ -19,7 +19,7 @@ public class PyramidBuild : MonoBehaviour {
 
         foreach (SpriteRenderer layer in layers)
         {
-            layer.color = new Color(1f, 1f, 1f, 0);
+            //layer.color = new Color(1f, 1f, 1f, 0);
         }
 	}
 
@@ -38,7 +38,7 @@ public class PyramidBuild : MonoBehaviour {
             }
             else
             {
-                layers[numLayers].color = new Color(1f, 1f, 1f, progressLayer);
+                //layers[numLayers].color = new Color(1f, 1f, 1f, progressLayer);
             }
         }
 	}
