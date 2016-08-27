@@ -5,13 +5,15 @@ public class PyramidBuild : MonoBehaviour {
 
     public int numLayers = 0;
     public int maxLayers = 3;
-    public int numWorkers = 0;
     public float progressLayer = 0f;
+    WorkerIndex workerindex;
 
     SpriteRenderer[] layers;
 
 	// Use this for initialization
 	void Start () {
+
+        workerindex = GameObject.Find("Manager").GetComponent<WorkerIndex>();
 
         layers = transform.GetComponentsInChildren<SpriteRenderer>();
 
@@ -19,13 +21,11 @@ public class PyramidBuild : MonoBehaviour {
         {
             layer.color = new Color(1f, 1f, 1f, 0);
         }
-
-        numWorkers = 3;
 	}
 
 	// Update is called once per frame
 	void FixedUpdate () {
-        double speed = numWorkers * 0.01;
+        double speed = workerindex.workersPyramid * 0.01;
 
         if (numLayers < maxLayers)
         {
