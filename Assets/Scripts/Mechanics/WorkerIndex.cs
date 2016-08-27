@@ -50,14 +50,11 @@ public class WorkerIndex : MonoBehaviour {
 
     private List<Worker> workersPyramid = new List<Worker>();
     private List<Worker> workersFarm = new List<Worker>();
-    public int initialWorkers;
     
-
     // Use this for initialization
     void Start() {
-        initialWorkers = 3;
-
-        CreateWorkers(initialWorkers, WorkSite.Farm);
+        CreateWorkers(1, WorkSite.Pyramid);
+        CreateWorkers(2, WorkSite.Farm);
     }
 
     // Update is called once per frame
@@ -84,13 +81,13 @@ public class WorkerIndex : MonoBehaviour {
             {
                 case WorkSite.Farm:
                     worker.instance = CreateInstance(GetFarmPosition(), transform.rotation);
+                    workersFarm.Add(worker);
                     break;
                 case WorkSite.Pyramid:
                     worker.instance = CreateInstance(GetPyramidPosition(), transform.rotation);
+                    workersPyramid.Add(worker);
                     break;
             }
-            
-            workersFarm.Add(worker);
         }
     }
 
