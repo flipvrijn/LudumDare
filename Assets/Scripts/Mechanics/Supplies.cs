@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Supplies : MonoBehaviour {
+public class Supplies : Publisher {
 
     public float food;
     public float stones;
     public int updateRate;
     public float avgFoodConsumption;
+    public float totalFoodConsumption;
 
     private int currentUpdate;
     private WorkerIndex workerIndex;
@@ -34,8 +35,18 @@ public class Supplies : MonoBehaviour {
                 food -= worker.foodConsumption;
                 foodConsumption += worker.foodConsumption;
             }
+            totalFoodConsumption = foodConsumption;
             avgFoodConsumption = foodConsumption / workerIndex.GetAllWorkers().Count;
+            Notify();
         }
         currentUpdate += 1;        
 	}
+
+    public override void Notify()
+    {
+        foreach (Observer observer in observers)
+        {
+            observer.Publish(food, stones, totalFoodConsumption);
+        }
+    }
 }

@@ -46,7 +46,7 @@ struct Worker
 
 public enum WorkSite { Pyramid, Farm };
 
-public class WorkerIndex : MonoBehaviour {
+public class WorkerIndex : Publisher {
 
     private List<Worker> workersPyramid = new List<Worker>();
     private List<Worker> workersFarm = new List<Worker>();
@@ -89,6 +89,7 @@ public class WorkerIndex : MonoBehaviour {
                     break;
             }
         }
+        Notify();
     }
 
     public void SendToPyramid(int num)
@@ -101,6 +102,7 @@ public class WorkerIndex : MonoBehaviour {
             workersFarm.Remove(worker);
         });
         workersPyramid.AddRange(farmWorkers);
+        Notify();
     }
 
     public void SendToFarm(int num)
@@ -113,6 +115,7 @@ public class WorkerIndex : MonoBehaviour {
             workersPyramid.Remove(worker);
         });
         workersFarm.AddRange(pyramidWorkers);
+        Notify();
     }
 
     public Vector3 GetFarmPosition()
@@ -151,5 +154,13 @@ public class WorkerIndex : MonoBehaviour {
         workersPyramid -= (int)(distr * num);
         workersFarm -= (int)((1f-distr) * num);
         */
+    }
+
+    public override void Notify()
+    {
+        foreach (Observer observer in observers)
+        {
+            observer.Publish(workersPyramid.Count + workersFarm.Count, workersPyramid.Count, workersFarm.Count);
+        }
     }
 }
