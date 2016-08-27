@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TimeCycle : MonoBehaviour {
+public class TimeCycle : Publisher {
 
     public int daysPassed = 0;
     public bool nightTime = false;
     public int speed;
     public int seconds;
     public int hour;
-    List<Observer> observers = new List<Observer>();
+    
 
     int maxSecs = 86400;
 
@@ -46,15 +46,4 @@ public class TimeCycle : MonoBehaviour {
         Notify();
     }
 
-    public void Subscribe(Observer observer) {
-        observers.Add(observer);
-    }
-
-    void Notify()
-    {
-        foreach (Observer observer in observers)
-        {
-            observer.Publish();
-        }
-    }
 }
