@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityStandardAssets.ImageEffects;
 
 public class TimeCycle : Publisher {
 
@@ -12,13 +13,12 @@ public class TimeCycle : Publisher {
 
     int lastHour;
 
-
     int maxSecs = 86400;
 
 	// Use this for initialization
 	void Start () {
-        speed = 2;   
-	}
+        speed = 2;
+    }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -44,7 +44,11 @@ public class TimeCycle : Publisher {
             nightTime = true;
         }
 
-        if (seconds < 0.25*maxSecs)
+        else if (seconds < 0.25*maxSecs)
+        {
+            nightTime = true;
+        }
+        else
         {
             nightTime = false;
         }
