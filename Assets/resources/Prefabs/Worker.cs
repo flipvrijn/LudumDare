@@ -20,8 +20,8 @@ public class Worker : MonoBehaviour {
     /* Movement related */
     public WorkSite site;
     public bool moving = false;
-    private Vector3 targetPosition;
-
+    private Vector2? origin;
+    private Vector2? targetPosition;
 
     /* Food stats */
     public float FoodConsumption;
@@ -29,20 +29,32 @@ public class Worker : MonoBehaviour {
     public bool WithoutFood;
     public int WithoutFoodSince;
     public int LastHungry;
-    
 
+    /* Sleep stats */
+    TimeCycle time;
+    public bool slept;
+    public float sleepyness;
+    
     // Use this for initialization
     void Start () {
-        targetPosition = new Vector3(-6f, -1f, 0);
-        moving = true;
+        time = GetComponent<TimeCycle>();
+        HP = 100;
+        WithoutFood = false;
+        Hungry = false;
+        slept = false;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (targetPosition != null && moving)
+        if (targetPosition.HasValue && moving)
         {
+            if (!origin.HasValue)
+                origin = new Vector2(this.transform.position.x, this.transform.position.y);
+
             MoveToTarget();
         }
+
+        sleepyness = CalculateSleep(time.hour);
 	}
 
     void Pause()
@@ -58,23 +70,38 @@ public class Worker : MonoBehaviour {
 
     void MoveToTarget()
     {
-        Vector3 currentPosition = this.transform.position;
+        Vector2 currentPosition = new Vector2(this.transform.position.x, this.transform.position.y);
 
-        if (Vector3.Distance(currentPosition, targetPosition) > 0.1f)
+        if (Vector2.Distance(currentPosition, targetPosition.Value) > 0.1f)
         {
-            Vector3 directionOfTravel = targetPosition - currentPosition;
+            Vector2 directionOfTravel = targetPosition.Value - currentPosition;
             directionOfTravel.Normalize();
 
             this.transform.Translate(
                 directionOfTravel.x * Speed * Time.fixedDeltaTime,
                 directionOfTravel.y * Speed * Time.fixedDeltaTime,
-                directionOfTravel.z * Speed * Time.fixedDeltaTime,
+                0f,
                 Space.World
             );
         }
         else
         {
             moving = false;
+        }
+    }
+
+    float CalculateSleep(int hourOfDay)
+    {
+        float hourNormalized = (2f / 24f) - 1;
+        return 10 / (1 + 6 * Mathf.Exp(-7 * hourNormalized));
+    }
+
+    void OnMouseDown()
+    {
+        if (moving)
+        {
+            Debug.Log("MEH!");
+            targetPosition = origin;
         }
     }
 }

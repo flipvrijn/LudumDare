@@ -125,11 +125,8 @@ public class WorkerIndex : Publisher {
             }
 
             Worker worker = instance.GetComponent<Worker>();
-            worker.HP = 100;
             worker.Speed = Random.Range(0.3f, 1f);
             worker.FoodConsumption = Random.Range(0.01f, 0.5f);
-            worker.WithoutFood = false;
-            worker.Hungry = false;
             switch (site)
             {
                 case WorkSite.Farm:
@@ -174,14 +171,14 @@ public class WorkerIndex : Publisher {
 
     public Vector3 GetFarmPosition()
     {
-        Vector3 ret = new Vector3(Random.Range(-1, -5f), Random.Range(2f, 3f), 2f);
+        Vector3 ret = new Vector3(Random.Range(-1, -5f), Random.Range(2f, 3f), 0f);
         Debug.Log(ret);
         return ret;
     }
 
     public Vector3 GetPyramidPosition()
     {
-        Vector3 ret = new Vector3(Random.Range(3f, 6f), Random.Range(-1.5f,-3.5f), 2f);
+        Vector3 ret = new Vector3(Random.Range(3f, 6f), Random.Range(-1.5f,-3.5f), 0f);
         Debug.Log(ret);
         return ret;
     }
@@ -205,12 +202,4 @@ public class WorkerIndex : Publisher {
         return allWorkers;
     }
 
-    public void Kill(int num)
-    {
-        /*numWorkers -= num;
-        float distr = Random.Range(0f, 1f);
-        workersPyramid -= (int)(distr * num);
-        workersFarm -= (int)((1f-distr) * num);
-        */
-    }
 }
