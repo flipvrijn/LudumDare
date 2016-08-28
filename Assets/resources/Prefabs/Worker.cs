@@ -53,7 +53,7 @@ public class Worker : MonoBehaviour {
             MoveToTarget();
         }
 
-        // SenseTheSleep();
+        SenseTheSleep();
     }
 
     void Pause()
@@ -70,11 +70,6 @@ public class Worker : MonoBehaviour {
     void SenseTheSleep()
     {
         Sleepyness = CalculateSleep(timeCycle.hour);
-
-        if (timeCycle.hour == 24)
-        {
-
-        }
     }
 
     void MoveToTarget()
