@@ -34,31 +34,28 @@ public class ResourceObserver : Observer {
         GameObject.Find("Manager").GetComponent<TimeCycle>().Subscribe(this);
     }
 
-    public override void Publish(float food, float stones, float totalFoodConsumption)
+    public override void Publish(Publisher publisher)
     {
-        this.food.text = "Food: " + (System.Math.Floor(food)).ToString();
-        this.stone.text = "Stones: " + (System.Math.Floor(stones)).ToString();
-       // this.totalFoodConsumption.text = totalFoodConsumption.ToString();
+        if (publisher.GetType() == typeof(Supplies))
+        {
+            Supplies supplies = (Supplies)publisher;
 
+            this.food.text = "Food: " + (System.Math.Floor(supplies.food)).ToString();
+            this.stone.text = "Stones: " + (System.Math.Floor(supplies.stones)).ToString();
+        }
+        else if (publisher.GetType() == typeof(TimeCycle))
+        {
+            TimeCycle timeCycle = (TimeCycle)publisher;
+
+            hour = timeCycle.hour;
+            day = timeCycle.daysPassed;
+            time.text = day.ToString() + "d " + hour.ToString() + "h";
+        }
+        else if (publisher.GetType() == typeof(WorkerIndex))
+        {
+            WorkerIndex workerIndex = (WorkerIndex)publisher;
+
+            this.workers.text = "Workers: " + workerIndex.GetAllWorkers().Count.ToString();
+        }
     }
-
-    public override void Publish(int workers, int workersPyramid, int workersField)
-    {
-        this.workers.text = "Workers: " + workers.ToString();
-       // this.workersPyramid.text = workersPyramid.ToString();
-       // this.workersField.text = workersField.ToString();
-    }
-
-    public override void Publish(int hour)
-    {
-        this.hour = hour;
-        time.text = day.ToString() + "d " + hour.ToString() + "h";
-    }
-
-    public override void Publish()
-    {
-        this.day += 1;
-        time.text = day.ToString() + "d " + hour.ToString() + "h";
-    }
-
 }

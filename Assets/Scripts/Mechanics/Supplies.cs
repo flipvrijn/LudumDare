@@ -5,43 +5,43 @@ public class Supplies : Publisher {
 
     public float food;
     public float stones;
-    public int updateRate;
     public float totalFoodConsumption;
 
-    private int currentUpdate;
+    public int currentTick;
+    private int tickRate;
     private WorkerIndex workerIndex;
-   // private GameTick gameTick;
 
 	// Use this for initialization
 	void Start () {
         workerIndex = GameObject.Find("Manager").GetComponent<WorkerIndex>();
-   //     gameTick = GameObject.Find("Manager").GetComponent<GameTick>();
         food   = 0f;
         stones = 0f;
 
-        updateRate = 100;
-        currentUpdate = 0;
+        tickRate = 100;
+        currentTick = 0;
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        food += workerIndex.NumWorkersFarm() * 0.5f;
+        if (currentTick % tickRate == 0)
+        { 
+            //food += workerIndex.NumWorkersFarm() * 0.5f;
 
-        float foodConsumption = 0f;
-        foreach (Worker worker in workerIndex.GetAllWorkers())
-        {
-            food -= worker.FoodConsumption;
-            foodConsumption += worker.FoodConsumption;
+            float foodConsumption = 0f;
+            foreach (Worker worker in workerIndex.GetAllWorkers())
+            {
+                food -= worker.FoodConsumption;
+                if (food < 0)
+                {
+                    food = 0;
+                }
+                foodConsumption += worker.FoodConsumption;
+            }
+            totalFoodConsumption = foodConsumption;
+            Notify(this);
+            currentTick = 0;
         }
-        totalFoodConsumption = foodConsumption;
-        Notify();
+
+        currentTick++;
 	}
-
-    public override void Notify()
-    {
-        foreach (Observer observer in observers)
-        {
-            observer.Publish(food, stones, totalFoodConsumption);
-        }
-    }
 }

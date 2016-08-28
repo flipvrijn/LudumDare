@@ -28,12 +28,15 @@ public class TimeCycle : Publisher {
 
         if (hour != lastHour)
         {
-            NextHour();
+            Notify(this);
         }
 
         if (seconds >= maxSecs)
         {
-            NextDay();
+            daysPassed += 1;
+            seconds = 0;
+            hour = 0;
+            Notify(this);
         }
 
         if (seconds > 0.9*maxSecs)
@@ -47,20 +50,9 @@ public class TimeCycle : Publisher {
         }
 	}
 
-    void NextHour()
+    public int GetHours()
     {
-        foreach (Observer observer in observers)
-        {
-            observer.Publish(hour);
-        }
-    }
-
-    void NextDay()
-    {
-        daysPassed += 1;
-        seconds = 0;
-        hour = 0;
-        Notify();
+        return daysPassed * 24 + hour;
     }
 
 }

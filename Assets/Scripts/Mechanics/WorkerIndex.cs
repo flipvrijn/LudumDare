@@ -4,55 +4,18 @@ using System.Collections.Generic;
 
 struct Worker
 {
-    private int _hp;
-    public int HP
-    {
-        get
-        {
-            return _hp;
-        }
-        set
-        {
-            _hp = value;
-        }
-    }
-    private float _speed;
-    public float Speed
-    {
-        get
-        {
-            return _speed;
-        }
-        set
-        {
-            _speed = value;
-        }
-    }
-    private float _foodConsumption;
-    public float FoodConsumption
-    {
-        get
-        {
-            return _foodConsumption;
-        }
-        set
-        {
-            _foodConsumption = value;
-        }
-    }
-
-    private GameObject _instance;
-    public GameObject Instance
-    {
-        get
-        {
-            return _instance;
-        }
-        set
-        {
-            _instance = value;
-        }
-    }
+    public int HP { get; set; }
+    public float Speed { get; set; }
+    
+    /* Food stats */
+    public float FoodConsumption { get; set; }
+    public bool Hungry { get; set; }
+    public bool WithoutFood { get; set; }
+    public int WithoutFoodSince { get; set; }
+    public int LastHungry { get; set; }
+    
+    /* Game instance of worker */
+    public GameObject Instance { get; set; }
 }
 
 public enum WorkSite { Pyramid, Farm };
@@ -61,15 +24,78 @@ public class WorkerIndex : Publisher {
 
     private List<Worker> workersPyramid = new List<Worker>();
     private List<Worker> workersFarm = new List<Worker>();
-    
+
+    private Supplies supplies;
+    private TimeCycle timeCycle;
+
+    private int currentTick;
+    private int tickRate;
+
     // Use this for initialization
     void Start() {
+        tickRate = 100;
+
+        supplies = GameObject.Find("Manager").GetComponent<Supplies>();
+        timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
+
         CreateWorkers(1, WorkSite.Pyramid);
         CreateWorkers(2, WorkSite.Farm);
     }
 
     // Update is called once per frame
-    void Update() {
+    void FixedUpdate() {
+        if (currentTick % tickRate == 0)
+        {
+            int currentFood = (int)System.Math.Floor(supplies.food);
+
+            List<Worker> allWorkers = GetAllWorkers();
+            for (int i = 0; i < allWorkers.Count; i++)
+            {
+                Worker worker = allWorkers[i];
+                if (currentFood == 0)
+                {
+                    Debug.Log("No food!");
+                    // Not hungry yet
+                    if (!worker.Hungry)
+                    {
+                        Debug.Log("Not hungry yet...");
+
+                        if (!worker.WithoutFood)
+                        {
+                            worker.WithoutFood = true;
+                            worker.WithoutFoodSince = timeCycle.GetHours();
+                            Debug.Log("Without food :(");
+                            Debug.Log(worker.WithoutFoodSince);
+                        }
+
+                        // Check if without food for a day
+                        Debug.Log(timeCycle.GetHours());
+                        if (timeCycle.GetHours() - worker.WithoutFoodSince > 24)
+                        {
+                            Debug.Log("Getting hungry!");
+                            worker.Hungry = true;
+                            worker.LastHungry = timeCycle.hour;
+                        }
+                    }
+                    else
+                    {
+                        // Reduce HP every so often
+                        int currentHour = timeCycle.hour;
+                        if (currentHour != worker.LastHungry)
+                        {
+                            Debug.Log("OUch!");
+                            worker.HP -= 5;
+                            worker.LastHungry = currentHour;
+                        }
+                    }
+                }
+                allWorkers[i] = worker;
+            }
+            workersFarm = allWorkers.GetRange(0, workersFarm.Count);
+            workersPyramid = allWorkers.GetRange(workersFarm.Count - 1, workersPyramid.Count);
+            currentTick = 0;
+        }
+        currentTick++;
     }
 
     private GameObject CreateInstance(Vector3 position, Quaternion rotation)
@@ -89,6 +115,8 @@ public class WorkerIndex : Publisher {
             worker.HP = 100;
             worker.Speed  = Random.Range(0.3f, 1f);
             worker.FoodConsumption = Random.Range(0.01f, 0.5f);
+            worker.WithoutFood = false;
+            worker.Hungry = false;
             switch (site)
             {
                 case WorkSite.Farm:
@@ -101,7 +129,7 @@ public class WorkerIndex : Publisher {
                     break;
             }
         }
-        Notify();
+        Notify(this);
     }
 
     public void SendToPyramid(int num)
@@ -114,7 +142,7 @@ public class WorkerIndex : Publisher {
             workersFarm.Remove(worker);
         });
         workersPyramid.AddRange(farmWorkers);
-        Notify();
+        Notify(this);
     }
 
     public void SendToFarm(int num)
@@ -127,7 +155,7 @@ public class WorkerIndex : Publisher {
             workersPyramid.Remove(worker);
         });
         workersFarm.AddRange(pyramidWorkers);
-        Notify();
+        Notify(this);
     }
 
     public Vector3 GetFarmPosition()
@@ -166,13 +194,5 @@ public class WorkerIndex : Publisher {
         workersPyramid -= (int)(distr * num);
         workersFarm -= (int)((1f-distr) * num);
         */
-    }
-
-    public override void Notify()
-    {
-        foreach (Observer observer in observers)
-        {
-            observer.Publish(workersPyramid.Count + workersFarm.Count, workersPyramid.Count, workersFarm.Count);
-        }
     }
 }
