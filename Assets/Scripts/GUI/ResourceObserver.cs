@@ -40,8 +40,8 @@ public class ResourceObserver : Observer {
         {
             Supplies supplies = (Supplies)publisher;
 
-            this.food.text = "Food: " + (System.Math.Floor(supplies.food)).ToString();
-            this.stone.text = "Stones: " + (System.Math.Floor(supplies.stones)).ToString();
+            this.food.text = (System.Math.Floor(supplies.food)).ToString();
+            this.stone.text = (System.Math.Floor(supplies.stones)).ToString();
         }
         else if (publisher.GetType() == typeof(TimeCycle))
         {
@@ -55,7 +55,7 @@ public class ResourceObserver : Observer {
         {
             WorkerIndex workerIndex = (WorkerIndex)publisher;
 
-            this.workers.text = "Workers: " + workerIndex.GetAllWorkers().Count.ToString();
+            this.workers.text = workerIndex.GetAllWorkers().Count.ToString();
         }
     }
 }
