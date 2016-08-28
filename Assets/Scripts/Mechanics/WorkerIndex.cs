@@ -113,7 +113,17 @@ public class WorkerIndex : Publisher {
     {
         for (int i = 0; i < num; i++)
         {
-            GameObject instance = CreateInstance(GetFarmPosition(), transform.rotation);
+            GameObject instance = null;
+            switch (site)
+            {
+                case WorkSite.Farm:
+                    instance = CreateInstance(GetFarmPosition(), transform.rotation);
+                    break;
+                case WorkSite.Pyramid:
+                    instance = CreateInstance(GetPyramidPosition(), transform.rotation);
+                    break;
+            }
+
             Worker worker = instance.GetComponent<Worker>();
             worker.HP = 100;
             worker.Speed = Random.Range(0.3f, 1f);
@@ -132,6 +142,7 @@ public class WorkerIndex : Publisher {
                     break;
             }
         }
+
         Notify(this);
     }
 
@@ -141,7 +152,7 @@ public class WorkerIndex : Publisher {
 
         List<Worker> farmWorkers = workersFarm.GetRange(0, n);
         farmWorkers.ForEach(worker => {
-            worker.transform.position = GetPyramidPosition();
+            worker.SetTargetPosition(GetPyramidPosition());
             workersFarm.Remove(worker);
         });
         workersPyramid.AddRange(farmWorkers);
@@ -154,7 +165,7 @@ public class WorkerIndex : Publisher {
 
         List<Worker> pyramidWorkers = workersPyramid.GetRange(0, n);
         pyramidWorkers.ForEach(worker => {
-            worker.transform.position = GetFarmPosition();
+            worker.SetTargetPosition(GetFarmPosition());
             workersPyramid.Remove(worker);
         });
         workersFarm.AddRange(pyramidWorkers);
@@ -163,12 +174,16 @@ public class WorkerIndex : Publisher {
 
     public Vector3 GetFarmPosition()
     {
-        return new Vector3(Random.Range(-3f, -4f), Random.Range(2.6f, 3f), 2f);
+        Vector3 ret = new Vector3(Random.Range(-1, -5f), Random.Range(2f, 3f), 2f);
+        Debug.Log(ret);
+        return ret;
     }
 
     public Vector3 GetPyramidPosition()
     {
-        return new Vector3(Random.Range(-2f, 2f), -2f, 2f);
+        Vector3 ret = new Vector3(Random.Range(3f, 6f), Random.Range(-1.5f,-3.5f), 2f);
+        Debug.Log(ret);
+        return ret;
     }
 
     public int NumWorkersPyramid()

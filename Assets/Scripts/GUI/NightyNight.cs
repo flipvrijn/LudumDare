@@ -23,14 +23,12 @@ public class NightyNight : Observer {
 
     public override void Publish(Publisher publisher)
     {
-        int hour = 0;
         bool lastHour = night;
 
         if (publisher.GetType() == typeof(TimeCycle))
         {
             TimeCycle timeCycle = (TimeCycle)publisher;
-
-            hour = timeCycle.hour;
+            
             night = timeCycle.nightTime;
         }
 
