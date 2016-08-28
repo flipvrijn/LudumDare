@@ -12,6 +12,9 @@ public class ResourceObserver : Observer {
     Text workersField;
     Text time;
 
+    int day;
+    int hour;
+
 	// Use this for initialization
 	void Start () {
         food = GameObject.Find("Text_food").GetComponent<Text>();
@@ -19,7 +22,8 @@ public class ResourceObserver : Observer {
 
         workers = GameObject.Find("Text_workers").GetComponent<Text>();
 
-        time = GameObject.Find("Text_food").GetComponent<Text>();
+        time = GameObject.Find("Text_time").GetComponent<Text>();
+        time.text = "0d 0h";
 
         Register();
 	}
@@ -27,6 +31,7 @@ public class ResourceObserver : Observer {
     public override void Register()
     {
         GameObject.Find("Manager").GetComponent<Supplies>().Subscribe(this);
+        GameObject.Find("Manager").GetComponent<TimeCycle>().Subscribe(this);
     }
 
     public override void Publish(float food, float stones, float totalFoodConsumption)
@@ -42,6 +47,18 @@ public class ResourceObserver : Observer {
         this.workers.text = "Workers: " + workers.ToString();
        // this.workersPyramid.text = workersPyramid.ToString();
        // this.workersField.text = workersField.ToString();
+    }
+
+    public override void Publish(int hour)
+    {
+        this.hour = hour;
+        time.text = day.ToString() + "d " + hour.ToString() + "h";
+    }
+
+    public override void Publish()
+    {
+        this.day += 1;
+        time.text = day.ToString() + "d " + hour.ToString() + "h";
     }
 
 }
