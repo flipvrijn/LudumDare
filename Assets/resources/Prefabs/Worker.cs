@@ -17,7 +17,12 @@ public class Worker : MonoBehaviour {
     }
     public float Speed;
 
+    /* Movement related */
     public WorkSite site;
+    public bool moving = false;
+    public Waypoint[] waypoints;
+    private Waypoint currentWaypoint;
+
 
     /* Food stats */
     public float FoodConsumption;
@@ -34,6 +39,6 @@ public class Worker : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	    
 	}
 }
