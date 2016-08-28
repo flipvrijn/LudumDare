@@ -4,8 +4,20 @@ using System.Collections.Generic;
 
 struct Worker
 {
+    private int _hp;
+    public int HP
+    {
+        get
+        {
+            return _hp;
+        }
+        set
+        {
+            _hp = value;
+        }
+    }
     private float _speed;
-    public float speed
+    public float Speed
     {
         get
         {
@@ -17,7 +29,7 @@ struct Worker
         }
     }
     private float _foodConsumption;
-    public float foodConsumption
+    public float FoodConsumption
     {
         get
         {
@@ -29,9 +41,8 @@ struct Worker
         }
     }
 
-
     private GameObject _instance;
-    public GameObject instance
+    public GameObject Instance
     {
         get
         {
@@ -75,16 +86,17 @@ public class WorkerIndex : Publisher {
         for (int i = 0; i < num; i++)
         {
             Worker worker = new Worker();
-            worker.speed = Random.Range(0.3f, 1f);
-            worker.foodConsumption = Random.Range(0.01f, 0.5f);
+            worker.HP = 100;
+            worker.Speed  = Random.Range(0.3f, 1f);
+            worker.FoodConsumption = Random.Range(0.01f, 0.5f);
             switch (site)
             {
                 case WorkSite.Farm:
-                    worker.instance = CreateInstance(GetFarmPosition(), transform.rotation);
+                    worker.Instance = CreateInstance(GetFarmPosition(), transform.rotation);
                     workersFarm.Add(worker);
                     break;
                 case WorkSite.Pyramid:
-                    worker.instance = CreateInstance(GetPyramidPosition(), transform.rotation);
+                    worker.Instance = CreateInstance(GetPyramidPosition(), transform.rotation);
                     workersPyramid.Add(worker);
                     break;
             }
@@ -98,7 +110,7 @@ public class WorkerIndex : Publisher {
 
         List<Worker> farmWorkers = workersFarm.GetRange(0, n);
         farmWorkers.ForEach(worker => {
-            worker.instance.transform.position = GetPyramidPosition();
+            worker.Instance.transform.position = GetPyramidPosition();
             workersFarm.Remove(worker);
         });
         workersPyramid.AddRange(farmWorkers);
@@ -111,7 +123,7 @@ public class WorkerIndex : Publisher {
 
         List<Worker> pyramidWorkers = workersPyramid.GetRange(0, n);
         pyramidWorkers.ForEach(worker => {
-            worker.instance.transform.position = GetFarmPosition();
+            worker.Instance.transform.position = GetFarmPosition();
             workersPyramid.Remove(worker);
         });
         workersFarm.AddRange(pyramidWorkers);
