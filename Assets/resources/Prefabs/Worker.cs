@@ -37,7 +37,7 @@ public class Worker : MonoBehaviour {
     
     // Use this for initialization
     void Start () {
-        time = GetComponent<TimeCycle>();
+        time = GameObject.Find("Manager").GetComponent<TimeCycle>();
         HP = 100;
         WithoutFood = false;
         Hungry = false;
