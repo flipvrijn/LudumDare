@@ -52,7 +52,6 @@ public class Worker : MonoBehaviour {
 
             MoveToTarget();
         }
-
         SenseTheSleep();
     }
 
@@ -65,11 +64,17 @@ public class Worker : MonoBehaviour {
     {
         this.targetPosition = targetPos;
         moving = true;
+
     }
 
     void SenseTheSleep()
     {
         Sleepyness = CalculateSleep(timeCycle.hour);
+
+        if (timeCycle.hour == 24)
+        {
+
+        }
     }
 
     void MoveToTarget()
