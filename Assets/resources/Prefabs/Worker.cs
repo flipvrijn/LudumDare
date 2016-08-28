@@ -17,12 +17,15 @@ public class Worker : MonoBehaviour {
     }
     public float Speed;
 
+    public WorkSite site;
+
     /* Food stats */
     public float FoodConsumption;
     public bool Hungry;
     public bool WithoutFood;
     public int WithoutFoodSince;
     public int LastHungry;
+    
 
     // Use this for initialization
     void Start () {

@@ -74,11 +74,9 @@ public class WorkerIndex : Publisher {
                     {
                         worker.WithoutFood = true;
                         worker.WithoutFoodSince = timeCycle.GetHours();
-                        Debug.Log(worker.WithoutFoodSince);
                     }
 
                     // Check if without food for a day
-                    Debug.Log(timeCycle.GetHours());
                     if (timeCycle.GetHours() - worker.WithoutFoodSince > 24)
                     {
                         worker.Hungry = true;
@@ -125,9 +123,11 @@ public class WorkerIndex : Publisher {
             switch (site)
             {
                 case WorkSite.Farm:
+                    worker.site = WorkSite.Farm;
                     workersFarm.Add(worker);
                     break;
                 case WorkSite.Pyramid:
+                    worker.site = WorkSite.Pyramid;
                     workersPyramid.Add(worker);
                     break;
             }
