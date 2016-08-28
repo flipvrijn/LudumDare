@@ -9,7 +9,9 @@ public class TimeCycle : Publisher {
     public int speed;
     public int seconds;
     public int hour;
-    
+
+    int lastHour;
+
 
     int maxSecs = 86400;
 
@@ -21,7 +23,14 @@ public class TimeCycle : Publisher {
 	// Update is called once per frame
 	void FixedUpdate () {
         seconds += speed*2;
+        lastHour = hour;
         hour = seconds / 3600;
+
+        if (hour != lastHour)
+        {
+            NextHour();
+        }
+
         if (seconds >= maxSecs)
         {
             NextDay();
@@ -37,6 +46,14 @@ public class TimeCycle : Publisher {
             nightTime = false;
         }
 	}
+
+    void NextHour()
+    {
+        foreach (Observer observer in observers)
+        {
+            observer.Publish(hour);
+        }
+    }
 
     void NextDay()
     {

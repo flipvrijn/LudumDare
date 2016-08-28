@@ -10,12 +10,12 @@ public class Supplies : Publisher {
 
     private int currentUpdate;
     private WorkerIndex workerIndex;
-    private GameTick gameTick;
+   // private GameTick gameTick;
 
 	// Use this for initialization
 	void Start () {
         workerIndex = GameObject.Find("Manager").GetComponent<WorkerIndex>();
-        gameTick = GameObject.Find("Manager").GetComponent<GameTick>();
+   //     gameTick = GameObject.Find("Manager").GetComponent<GameTick>();
         food   = 0f;
         stones = 0f;
 

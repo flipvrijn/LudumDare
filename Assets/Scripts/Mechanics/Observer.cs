@@ -9,5 +9,7 @@ public class Observer : MonoBehaviour {
 
     public virtual void Publish(int workers, int workersPyramid, int workersField) { }
 
+    public virtual void Publish(int hours) { }
+
     public virtual void Register() { }
 }
