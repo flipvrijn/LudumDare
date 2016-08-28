@@ -19,7 +19,7 @@ public class HappinessIndex : Observer {
         time.Subscribe(this);
     }
 
-    public override void Publish()
+    public override void Publish(Publisher publisher)
     {
         nightsWithoutSleep += 1;
     }
