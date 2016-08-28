@@ -125,6 +125,7 @@ public class WorkerIndex : Publisher {
             }
 
             Worker worker = instance.GetComponent<Worker>();
+            worker.HP = 100;
             worker.Speed = Random.Range(0.3f, 1f);
             worker.FoodConsumption = Random.Range(0.01f, 0.5f);
             switch (site)

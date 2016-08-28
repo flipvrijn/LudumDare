@@ -31,18 +31,17 @@ public class Worker : MonoBehaviour {
     public int LastHungry;
 
     /* Sleep stats */
-    TimeCycle time;
-    public bool slept;
-    public float sleepyness;
+    TimeCycle timeCycle;
+    public bool Slept;
+    public float Sleepyness;
     
     // Use this for initialization
     void Start () {
-        time = GetComponent<TimeCycle>();
-        HP = 100;
+        timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
         WithoutFood = false;
         Hungry = false;
-        slept = false;
-	}
+        Slept = false;
+    }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -54,8 +53,8 @@ public class Worker : MonoBehaviour {
             MoveToTarget();
         }
 
-        sleepyness = CalculateSleep(time.hour);
-	}
+        // SenseTheSleep();
+    }
 
     void Pause()
     {
@@ -66,6 +65,16 @@ public class Worker : MonoBehaviour {
     {
         this.targetPosition = targetPos;
         moving = true;
+    }
+
+    void SenseTheSleep()
+    {
+        Sleepyness = CalculateSleep(timeCycle.hour);
+
+        if (timeCycle.hour == 24)
+        {
+
+        }
     }
 
     void MoveToTarget()
