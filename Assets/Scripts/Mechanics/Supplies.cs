@@ -25,7 +25,7 @@ public class Supplies : Publisher {
 	void FixedUpdate () {
         if (currentTick % tickRate == 0)
         { 
-            //food += workerIndex.NumWorkersFarm() * 0.5f;
+            food += workerIndex.NumWorkersFarm() * 0.5f;
 
             float foodConsumption = 0f;
             foreach (Worker worker in workerIndex.GetAllWorkers())

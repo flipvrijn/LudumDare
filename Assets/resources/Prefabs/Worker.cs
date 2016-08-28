@@ -31,16 +31,26 @@ public class Worker : MonoBehaviour {
     public int LastHungry;
 
     /* Sleep stats */
+    public bool slept;
+    public bool sleepy;
+    public float sleepyness;
+    public float SleepRate;
+
     TimeCycle timeCycle;
-    public bool Slept;
-    public float Sleepyness;
-    
+    private int currentTick;
+    private int tickRate;
+
     // Use this for initialization
     void Start () {
         timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
+        tickRate = 100;
+
         WithoutFood = false;
         Hungry = false;
-        Slept = false;
+        slept = false;
+        sleepy = false;
+
+        SetTargetPosition(new Vector2());
     }
 	
 	// Update is called once per frame
@@ -60,21 +70,23 @@ public class Worker : MonoBehaviour {
         moving = !moving;
     }
 
-    public void SetTargetPosition(Vector3 targetPos)
+    public void SetTargetPosition(Vector2 targetPos)
     {
         this.targetPosition = targetPos;
         moving = true;
-
     }
 
     void SenseTheSleep()
     {
-        Sleepyness = CalculateSleep(timeCycle.hour);
-
-        if (timeCycle.hour == 24)
+        /** THIS FUCKIN' SUCKS **/
+        if (currentTick % tickRate == 0)
         {
-
+            sleepyness += SleepRate*timeCycle.speed + 0.01f * timeCycle.hour;
+            if (sleepyness > 20)
+                sleepy = true;
+            currentTick = 0;
         }
+        currentTick++;
     }
 
     void MoveToTarget()
@@ -87,8 +99,8 @@ public class Worker : MonoBehaviour {
             directionOfTravel.Normalize();
 
             this.transform.Translate(
-                directionOfTravel.x * Speed * Time.fixedDeltaTime,
-                directionOfTravel.y * Speed * Time.fixedDeltaTime,
+                directionOfTravel.x * Speed * timeCycle.speed * Time.fixedDeltaTime,
+                directionOfTravel.y * Speed * timeCycle.speed * Time.fixedDeltaTime,
                 0f,
                 Space.World
             );

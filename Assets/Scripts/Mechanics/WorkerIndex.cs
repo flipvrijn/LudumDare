@@ -128,6 +128,7 @@ public class WorkerIndex : Publisher {
             worker.HP = 100;
             worker.Speed = Random.Range(0.3f, 1f);
             worker.FoodConsumption = Random.Range(0.01f, 0.5f);
+            worker.SleepRate = Random.Range(0.2f, 0.5f);
             switch (site)
             {
                 case WorkSite.Farm:
