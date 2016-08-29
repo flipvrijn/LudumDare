@@ -19,6 +19,7 @@ public class Worker : Observer {
 
     /* Movement related */
     public WorkSite site;
+    public WorkSite lastSite;
 
     public bool moving = false;
     private Vector2? origin;
@@ -43,6 +44,7 @@ public class Worker : Observer {
 
         sleepy = false;
         Hungry = false;
+        //lastSite = WorkSite.Settlement;
         
         Register();
 
@@ -91,9 +93,6 @@ public class Worker : Observer {
     void FixedUpdate () {
         if (targetPosition.HasValue && moving)
         {
-            if (!origin.HasValue)
-                origin = new Vector2(this.transform.position.x, this.transform.position.y);
-
             MoveToTarget();
         }
         
@@ -123,6 +122,7 @@ public class Worker : Observer {
     {
         if (this.site != site)
         {
+            lastSite = this.site;
             Site.Create(this.site).Unregister(this);
         }
 
@@ -148,7 +148,6 @@ public class Worker : Observer {
         }
         else
         {
-            Debug.Log("Register " + moving.ToString() + site.ToString() + targetPosition.Value.ToString());
             targetPosition = null;
             moving = false;
             Site.Create(site).Register(this);
@@ -165,8 +164,8 @@ public class Worker : Observer {
     {
         if (moving)
         {
-            Debug.Log("MEH!");
-            targetPosition = origin;
+            MoveToSite(lastSite);
+            Debug.Log("dsfjsi");
         }
     }
 }

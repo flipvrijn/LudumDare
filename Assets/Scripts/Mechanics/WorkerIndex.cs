@@ -118,6 +118,7 @@ public class WorkerIndex : Publisher {
     public void CreateWorkers(int num, WorkSite site)
     {
         List<Worker> workersOnSite = new List<Worker>();
+        Site worksite = Site.Create(site);
         for (int i = 0; i < num; i++)
         {
             GameObject instance = null;
@@ -127,7 +128,10 @@ public class WorkerIndex : Publisher {
                     instance = CreateInstance(Site.Create(WorkSite.Farm).GetRandomPosition(), transform.rotation);
                     break;
                 case WorkSite.Pyramid:
-                    instance = CreateInstance(Site.Create(WorkSite.Farm).GetRandomPosition(), transform.rotation);
+                    instance = CreateInstance(Site.Create(WorkSite.Pyramid).GetRandomPosition(), transform.rotation);
+                    break;
+                case WorkSite.Settlement:
+                    instance = CreateInstance(Site.Create(WorkSite.Settlement).GetRandomPosition(), transform.rotation);
                     break;
             }
 
@@ -136,10 +140,9 @@ public class WorkerIndex : Publisher {
             worker.Speed = Random.Range(0.2f, 0.5f);
             worker.FoodConsumption = Random.Range(0.01f, 0.5f);
             worker.site = site;
-            workersOnSite.Add(worker);
+            worksite.Register(worker);
         }
-        workers[site].AddRange(workersOnSite);
-
+        
         Notify(this);
     }
 
