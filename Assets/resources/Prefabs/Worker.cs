@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Worker : MonoBehaviour {
+public class Worker : Observer {
 
     public float hp;
     public float HP
@@ -26,9 +26,7 @@ public class Worker : MonoBehaviour {
     /* Food stats */
     public float FoodConsumption;
     public bool Hungry;
-    public bool WithoutFood;
-    public int WithoutFoodSince;
-    public int LastHungry;
+    public int HoursWithoutFood;
 
     /* Sleep stats */
     public bool slept;
@@ -45,16 +43,38 @@ public class Worker : MonoBehaviour {
         timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
         tickRate = 100;
 
-        WithoutFood = false;
-        Hungry = false;
         slept = false;
         sleepy = false;
+        Hungry = false;
 
         SetTargetPosition(new Vector2());
+
+        Register();
     }
-	
-	// Update is called once per frame
-	void FixedUpdate () {
+
+    public override void Register()
+    {
+        timeCycle.Subscribe(this);
+    }
+
+    public override void Publish(Publisher publisher)
+    {
+        // Sleepyness ticking every hour
+        sleepyness += 0.5f;
+        if (sleepyness > 10f)
+        {
+            sleepyness = 10f;
+        }
+
+        // Starvation ticking every hour
+        if (Hungry)
+        {
+            HP -= FoodConsumption * 10;
+        }
+    }
+
+    // Update is called once per frame
+    void FixedUpdate () {
         if (targetPosition.HasValue && moving)
         {
             if (!origin.HasValue)
@@ -78,15 +98,10 @@ public class Worker : MonoBehaviour {
 
     void SenseTheSleep()
     {
-        /** THIS FUCKIN' SUCKS **/
-        if (currentTick % tickRate == 0)
+        if (sleepyness >= 10)
         {
-            sleepyness += SleepRate*timeCycle.speed + 0.01f * timeCycle.hour;
-            if (sleepyness > 20)
-                sleepy = true;
-            currentTick = 0;
+            sleepy = true;
         }
-        currentTick++;
     }
 
     void MoveToTarget()

@@ -36,7 +36,6 @@ public class TimeCycle : Publisher {
             daysPassed += 1;
             seconds = 0;
             hour = 0;
-            Notify(this);
         }
 
         if (seconds > 0.9*maxSecs)
