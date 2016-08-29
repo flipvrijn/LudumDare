@@ -38,12 +38,10 @@ public class Supplies : Publisher {
             float foodConsumption = 0f;
             foreach (Worker worker in workerIndex.GetAllWorkers())
             {
-                food -= worker.FoodConsumption;
+                food -= worker.foodConsumption;
                 if (food < 0)
-                {
                     food = 0;
-                }
-                foodConsumption += worker.FoodConsumption;
+                foodConsumption += worker.foodConsumption;
             }
             totalFoodConsumption = foodConsumption;
             Notify(this);

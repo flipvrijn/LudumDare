@@ -6,7 +6,6 @@ using System.Linq;
 public class WorkerIndex : Publisher {
 
     private Supplies supplies;
-    private TimeCycle timeCycle;
 
     private int currentTick;
     private int tickRate;
@@ -19,7 +18,6 @@ public class WorkerIndex : Publisher {
         noFood = false;
 
         supplies = GameObject.Find("Manager").GetComponent<Supplies>();
-        timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
 
         CreateWorkers(1, WorkSite.Pyramid);
         CreateWorkers(2, WorkSite.Farm);
@@ -56,11 +54,13 @@ public class WorkerIndex : Publisher {
                 .Take(starvingWorkers)
                 .ToArray();
 
+            Debug.Log(starvers);
+
             // Starve them
             for (int i = 0; i < starvers.Length; i++)
             {
                 Worker worker = allWorkers[starvers[i]];
-                worker.Hungry = true;
+                worker.hungry = true;
             }
         }
         else if (starvingWorkers <= 0)
@@ -70,10 +70,9 @@ public class WorkerIndex : Publisher {
             for (int i = 0; i < allWorkers.Count; i++)
             {
                 Worker worker = allWorkers[i];
-                worker.Hungry = false;
+                worker.hungry = false;
             }
         }
-
     }
 
     private GameObject CreateInstance(Vector3 position, Quaternion rotation)
@@ -105,9 +104,9 @@ public class WorkerIndex : Publisher {
             }
 
             Worker worker = instance.GetComponent<Worker>();
-            worker.HP = 100;
-            worker.Speed = Random.Range(0.2f, 0.5f);
-            worker.FoodConsumption = Random.Range(0.01f, 0.5f);
+            worker.hp = 100;
+            worker.speed = Random.Range(0.2f, 0.5f);
+            worker.foodConsumption = Random.Range(0.01f, 0.5f);
             worker.site = site;
             worksite.Register(worker);
         }

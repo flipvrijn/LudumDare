@@ -3,19 +3,21 @@ using System.Collections;
 
 public class Worker : Observer {
 
-    public float hp;
-    public float HP
+    public float _hp;
+    public float hp
     {
         get
         {
-            return hp;
+            return _hp;
         }
         set
         {
-            hp = (value < 0) ? 0 : value;
+            _hp = (value < 0) ? 0 : value;
+            _hp = (value > 100) ? 100 : value;
         }
     }
-    public float Speed;
+    public float speed;
+    public float happyness = 100f;
 
     /* Movement related */
     public WorkSite site;
@@ -26,24 +28,25 @@ public class Worker : Observer {
     private Vector2? targetPosition;
 
     /* Food stats */
-    public float FoodConsumption;
-    public bool Hungry;
-    public int HoursWithoutFood;
+    public float foodConsumption = 0f;
+    public bool hungry = false;
+    public int hoursWithoutFood = 0;
 
     /* Sleep stats */
-    public bool sleeping;
-    public bool sleepy;
-    public float sleepyness;
-    public float SleepRate;
+    public bool sleeping = false;
+    public bool sleepy = false;
+    public float sleepyness = 0f;
+    public int hoursWithoutSleep = 0;
+    public float sleepyPenalty = 0f;
+
+    /* Rebelling stats */
+    public bool rebelling = false;
 
     TimeCycle timeCycle;
 
     // Use this for initialization
     void Start () {
         timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
-
-        sleepy = false;
-        Hungry = false;
         
         Register();
 
@@ -69,9 +72,26 @@ public class Worker : Observer {
         }
 
         // Starvation ticking every hour
-        if (Hungry)
+        if (hungry)
         {
-            HP -= FoodConsumption * 10;
+            hp -= foodConsumption * 10;
+            hoursWithoutFood++;
+        }
+        // Regen ticking every hour
+        else
+        {
+            hp += foodConsumption * 20;
+            hoursWithoutFood = 0;
+        }
+
+        // Sleepyness penalty
+        if (sleepy && !sleeping)
+        {
+            sleepyPenalty += 0.1f;
+            if (sleepyPenalty > 10)
+                sleepyPenalty = 10;
+            hp -= sleepyPenalty;
+            hoursWithoutSleep++;
         }
     }
 
@@ -90,16 +110,32 @@ public class Worker : Observer {
 
     // Update is called once per frame
     void FixedUpdate () {
+        // Move to new target
         if (targetPosition.HasValue && moving)
         {
             MoveToTarget();
         }
 
+        // Check if dead
         DeathCheck();
 
+        // Update happyness
+        HappynessCheck();
+
+        // Go to bed
         if (site != WorkSite.Settlement && sleepy)
         {
-            GoToBed();
+            if (Random.Range(0f, 1000 - timeCycle.speed) <= 2)
+                GoToBed();
+        }
+
+        // Decide to rebel or not
+        if (happyness < 50f)
+        {
+            if (Random.Range(0f, 10000 - happyness - timeCycle.speed) <= 2)
+            {
+                rebelling = true;
+            }
         }
     }
 
@@ -116,11 +152,16 @@ public class Worker : Observer {
 
     void DeathCheck()
     {
-        if (HP == 0)
+        if (hp == 0)
         {
             Site.Create(this.site).Unregister(this);
             Destroy(this.gameObject);
         }
+    }
+
+    void HappynessCheck()
+    {
+        happyness = 100 - 1.6f * hoursWithoutFood - 1.4f * hoursWithoutSleep - 1 / hp;
     }
 
     public void MoveToSite(WorkSite site)
@@ -145,8 +186,8 @@ public class Worker : Observer {
             directionOfTravel.Normalize();
 
             this.transform.Translate(
-                directionOfTravel.x * Speed * timeCycle.speed * Time.fixedDeltaTime,
-                directionOfTravel.y * Speed * timeCycle.speed * Time.fixedDeltaTime,
+                directionOfTravel.x * speed * timeCycle.speed * Time.fixedDeltaTime,
+                directionOfTravel.y * speed * timeCycle.speed * Time.fixedDeltaTime,
                 0f,
                 Space.World
             );

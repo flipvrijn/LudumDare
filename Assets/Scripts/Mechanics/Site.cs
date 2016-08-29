@@ -38,7 +38,7 @@ public class Site : MonoBehaviour {
         float efficiency = 0;
         foreach (Worker worker in workers)
         {
-            efficiency += (1f - (ToFloat(worker.Hungry) * 0.2f) - (ToFloat(worker.sleepy) * 0.3f));
+            efficiency += (1f - (ToFloat(worker.hungry) * 0.2f) - (ToFloat(worker.sleepy) * 0.3f));
         }
         efficiency *= 0.01f;
 
