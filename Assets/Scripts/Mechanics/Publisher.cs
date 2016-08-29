@@ -17,5 +17,6 @@ public class Publisher : MonoBehaviour {
     public void Subscribe(Observer observer)
     {
         observers.Add(observer);
+        Notify(this);
     }
 }

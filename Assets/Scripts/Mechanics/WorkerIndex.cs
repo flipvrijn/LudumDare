@@ -5,6 +5,8 @@ using System.Linq;
 
 public class WorkerIndex : Publisher {
 
+    public int numWorkers;
+
     private Supplies supplies;
 
     private int currentTick;
@@ -18,9 +20,10 @@ public class WorkerIndex : Publisher {
         noFood = false;
 
         supplies = GameObject.Find("Manager").GetComponent<Supplies>();
+        
+        CreateWorkers(3, WorkSite.Farm);
 
-        CreateWorkers(1, WorkSite.Pyramid);
-        CreateWorkers(2, WorkSite.Farm);
+        Site.Create(WorkSite.Farm);
     }
 
     // Update is called once per frame
@@ -33,7 +36,7 @@ public class WorkerIndex : Publisher {
         }
         currentTick++;
     }
-
+    
     private void DoHungerCheck()
     {
         int currentFood = (int)System.Math.Floor(supplies.food);
@@ -73,6 +76,8 @@ public class WorkerIndex : Publisher {
                 worker.hungry = false;
             }
         }
+
+        Notify(this);
     }
 
     private GameObject CreateInstance(Vector3 position, Quaternion rotation)
@@ -86,6 +91,8 @@ public class WorkerIndex : Publisher {
 
     public void CreateWorkers(int num, WorkSite site)
     {
+        numWorkers += num;
+        
         Site worksite = Site.Create(site);
         for (int i = 0; i < num; i++)
         {
