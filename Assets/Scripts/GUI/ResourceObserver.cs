@@ -32,6 +32,7 @@ public class ResourceObserver : Observer {
     {
         GameObject.Find("Manager").GetComponent<Supplies>().Subscribe(this);
         GameObject.Find("Manager").GetComponent<TimeCycle>().Subscribe(this);
+        GameObject.Find("Manager").GetComponent<WorkerIndex>().Subscribe(this);
     }
 
     public override void Publish(Publisher publisher)

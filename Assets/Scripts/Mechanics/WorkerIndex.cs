@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class WorkerIndex : Publisher {
-    
-    private Dictionary<WorkSite, List<Worker>> workers;
-    private List<Worker> hungryWorkers;
 
     private Supplies supplies;
     private TimeCycle timeCycle;
@@ -23,11 +20,6 @@ public class WorkerIndex : Publisher {
 
         supplies = GameObject.Find("Manager").GetComponent<Supplies>();
         timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
-
-        workers = new Dictionary<WorkSite, List<Worker>>();
-        workers.Add(WorkSite.Farm, new List<Worker>());
-        workers.Add(WorkSite.Pyramid, new List<Worker>());
-        hungryWorkers = new List<Worker>();
 
         CreateWorkers(1, WorkSite.Pyramid);
         CreateWorkers(2, WorkSite.Farm);
@@ -49,12 +41,7 @@ public class WorkerIndex : Publisher {
         int currentFood = (int)System.Math.Floor(supplies.food);
 
         // Get workers from all work sites
-        List<Worker> allWorkers = new List<Worker>();
-        WorkSite[] worksites = (WorkSite[])System.Enum.GetValues(typeof(WorkSite));
-        foreach(WorkSite ws in worksites)
-        {
-            allWorkers.AddRange(Site.Create(ws).GetWorkers());
-        }
+        List<Worker> allWorkers = GetAllWorkers();
 
         // Calculate how many will starve with current food
         int starvingWorkers = allWorkers.Count - currentFood;
@@ -100,7 +87,6 @@ public class WorkerIndex : Publisher {
 
     public void CreateWorkers(int num, WorkSite site)
     {
-        List<Worker> workersOnSite = new List<Worker>();
         Site worksite = Site.Create(site);
         for (int i = 0; i < num; i++)
         {
@@ -127,54 +113,15 @@ public class WorkerIndex : Publisher {
         }
         
         Notify(this);
-    }
+    }    
 
-    public void SendToPyramid(int num)
-    {
-        int n = (workers[WorkSite.Farm].Count - num >= 0) ? num : workers[WorkSite.Farm].Count;
-
-        List<Worker> farmWorkers = workers[WorkSite.Farm].GetRange(0, n);
-        farmWorkers.ForEach(worker => {
-            worker.MoveToSite(WorkSite.Pyramid);
-            workers[WorkSite.Farm].Remove(worker);
-        });
-        workers[WorkSite.Pyramid].AddRange(farmWorkers);
-        Notify(this);
-    }
-
-    public void SendToFarm(int num)
-    {
-        int n = (workers[WorkSite.Pyramid].Count - num >= 0) ? num : workers[WorkSite.Pyramid].Count;
-
-        List<Worker> pyramidWorkers = workers[WorkSite.Pyramid].GetRange(0, n);
-        pyramidWorkers.ForEach(worker => {
-            worker.MoveToSite(WorkSite.Farm);
-            workers[WorkSite.Pyramid].Remove(worker);
-        });
-        workers[WorkSite.Farm].AddRange(pyramidWorkers);
-        Notify(this);
-    }
-
-
-
-    
-
-    public int NumWorkersPyramid()
-    {
-        return workers[WorkSite.Pyramid].Count;
-    }
-
-    public int NumWorkersFarm()
-    {
-        return workers[WorkSite.Farm].Count;
-    }
-
-    internal List<Worker> GetAllWorkers()
+    public List<Worker> GetAllWorkers()
     {
         List<Worker> allWorkers = new List<Worker>();
-        foreach (KeyValuePair<WorkSite, List<Worker>> entry in workers)
+        WorkSite[] worksites = (WorkSite[])System.Enum.GetValues(typeof(WorkSite));
+        foreach (WorkSite ws in worksites)
         {
-            allWorkers.AddRange(entry.Value);
+            allWorkers.AddRange(Site.Create(ws).GetWorkers());
         }
 
         return allWorkers;
