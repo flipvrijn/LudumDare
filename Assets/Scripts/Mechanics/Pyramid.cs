@@ -16,9 +16,11 @@ public class Pyramid : Site {
         base.Start();
         
         layers = GameObject.Find("Pyramid").GetComponentsInChildren<SpriteRenderer>();
+        
         foreach (SpriteRenderer layer in layers)
         {
             layer.color = new Color(1f, 1f, 1f, 0);
+
         }
 	}
 

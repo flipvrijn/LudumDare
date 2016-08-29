@@ -8,6 +8,8 @@ public class WorkerIndex : Publisher {
     private Dictionary<WorkSite, List<Worker>> workers;
     private List<Worker> hungryWorkers;
 
+    public int numWorkers;
+
     private Supplies supplies;
     private TimeCycle timeCycle;
 
@@ -28,9 +30,8 @@ public class WorkerIndex : Publisher {
         workers.Add(WorkSite.Farm, new List<Worker>());
         workers.Add(WorkSite.Pyramid, new List<Worker>());
         hungryWorkers = new List<Worker>();
-
-        CreateWorkers(1, WorkSite.Pyramid);
-        CreateWorkers(2, WorkSite.Farm);
+        
+        CreateWorkers(3, WorkSite.Farm);
 
         Site.Create(WorkSite.Farm);
     }
@@ -58,6 +59,7 @@ public class WorkerIndex : Publisher {
                 {
                     Destroy(worker.gameObject);
                     entry.Value.Remove(worker);
+                    numWorkers--;
                 }
             }
         }
@@ -103,6 +105,7 @@ public class WorkerIndex : Publisher {
 
             hungryWorkers.Clear();
         }
+        Notify(this);
 
     }
 
@@ -117,6 +120,8 @@ public class WorkerIndex : Publisher {
 
     public void CreateWorkers(int num, WorkSite site)
     {
+        numWorkers += num;
+
         List<Worker> workersOnSite = new List<Worker>();
         Site worksite = Site.Create(site);
         for (int i = 0; i < num; i++)
