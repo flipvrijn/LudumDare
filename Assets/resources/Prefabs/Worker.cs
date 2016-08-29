@@ -44,7 +44,6 @@ public class Worker : Observer {
 
         sleepy = false;
         Hungry = false;
-        //lastSite = WorkSite.Settlement;
         
         Register();
 
@@ -58,6 +57,7 @@ public class Worker : Observer {
 
     public override void Publish(Publisher publisher)
     {
+        // Sleepyness ticking every hour
         if (!sleeping)
         {
             sleepyness += 0.5f;
@@ -67,7 +67,6 @@ public class Worker : Observer {
                 sleepy = true;
             }
         }
-        // Sleepyness ticking every hour
 
         // Starvation ticking every hour
         if (Hungry)
@@ -95,7 +94,9 @@ public class Worker : Observer {
         {
             MoveToTarget();
         }
-        
+
+        DeathCheck();
+
         if (site != WorkSite.Settlement && sleepy)
         {
             GoToBed();
@@ -107,15 +108,19 @@ public class Worker : Observer {
         MoveToSite(WorkSite.Settlement);
     }
 
-    void Pause()
-    {
-        moving = !moving;
-    }
-
     public void SetTargetPosition(Vector2 targetPos)
     {
         this.targetPosition = targetPos;
         moving = true;
+    }
+
+    void DeathCheck()
+    {
+        if (HP == 0)
+        {
+            Site.Create(this.site).Unregister(this);
+            Destroy(this.gameObject);
+        }
     }
 
     public void MoveToSite(WorkSite site)

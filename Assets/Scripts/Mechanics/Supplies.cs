@@ -22,7 +22,7 @@ public class Supplies : Publisher {
         currentTick = 0;
 
         workerIndex = GameObject.Find("Manager").GetComponent<WorkerIndex>();
-        food   = 0f;
+        food   = 2f;
         stones = 0f;
 
         farm = GameObject.Find("Farm").GetComponent<Farm>();
