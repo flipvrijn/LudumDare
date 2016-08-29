@@ -215,6 +215,7 @@ public class Worker : Observer {
         {
             lastSite = this.site;
             Site.Create(this.site).Unregister(this);
+            Site.Create(site).Register(this);
         }
 
         this.site = site;
@@ -229,7 +230,7 @@ public class Worker : Observer {
     {
         Vector2 currentPosition = new Vector2(this.transform.position.x, this.transform.position.y);
 
-        if (moving && Vector2.Distance(currentPosition, targetPosition.Value) > 0.4f)
+        if (moving && Vector2.Distance(currentPosition, targetPosition.Value) > 0.2f)
         {
             Vector2 directionOfTravel = targetPosition.Value - currentPosition;
             directionOfTravel.Normalize();
@@ -245,7 +246,7 @@ public class Worker : Observer {
         {
             targetPosition = null;
             moving = false;
-            Site.Create(site).Register(this);
+            
         }
     }
 

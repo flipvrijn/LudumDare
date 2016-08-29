@@ -8,6 +8,7 @@ public class Site : MonoBehaviour {
 
     protected int numWorkers;
     public List<Worker> workers;
+    public WorkSite type;
 
     protected virtual void Start()
     {

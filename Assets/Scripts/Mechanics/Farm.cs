@@ -7,6 +7,7 @@ public class Farm : Site {
     // Use this for initialization
     protected override void Start() {
         base.Start();
+        type = WorkSite.Farm;
     }
 	
 	// Update is called once per frame

@@ -11,6 +11,8 @@ public class Settlement : Site {
     protected override void Start () {
         base.Start();
 
+        type = WorkSite.Settlement;
+
         tickRate = 100;
         currentTick = 0;
     }
