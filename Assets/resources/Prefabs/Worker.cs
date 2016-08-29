@@ -79,7 +79,12 @@ public class Worker : Observer {
 
             MoveToTarget();
         }
+
+        // Sense the sleepyness
         SenseTheSleep();
+
+        // Check if dead
+        DeathCheck();
     }
 
     void Pause()
@@ -91,6 +96,15 @@ public class Worker : Observer {
     {
         this.targetPosition = targetPos;
         moving = true;
+    }
+
+    void DeathCheck()
+    {
+        if (HP == 0)
+        {
+            Site.Create(this.site).Unregister(this);
+            Destroy(this.gameObject);
+        }
     }
 
     void SenseTheSleep()

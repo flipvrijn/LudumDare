@@ -31,77 +31,60 @@ public class WorkerIndex : Publisher {
 
         CreateWorkers(1, WorkSite.Pyramid);
         CreateWorkers(2, WorkSite.Farm);
-
-        Site.Create(WorkSite.Farm);
     }
 
     // Update is called once per frame
     void FixedUpdate() {
         if (currentTick % tickRate == 0)
         {
-            //DoHungerCheck();
-
-            DoDeathCheck();
+            DoHungerCheck();
 
             currentTick = 0;
         }
         currentTick++;
     }
 
-    private void DoDeathCheck()
-    {
-        foreach (KeyValuePair<WorkSite, List<Worker>> entry in workers)
-        {
-            foreach (Worker worker in entry.Value.ToList())
-            {
-                if (worker.HP == 0)
-                {
-                    Destroy(worker.gameObject);
-                    entry.Value.Remove(worker);
-                }
-            }
-        }
-    }
-
     private void DoHungerCheck()
     {
         int currentFood = (int)System.Math.Floor(supplies.food);
 
-        List<Worker> allWorkers = GetAllWorkers();
+        // Get workers from all work sites
+        List<Worker> allWorkers = new List<Worker>();
+        WorkSite[] worksites = (WorkSite[])System.Enum.GetValues(typeof(WorkSite));
+        foreach(WorkSite ws in worksites)
+        {
+            allWorkers.AddRange(Site.Create(ws).GetWorkers());
+        }
+
+        // Calculate how many will starve with current food
         int starvingWorkers = allWorkers.Count - currentFood;
         if (starvingWorkers > 0 && !noFood)
         {
             noFood = true;
 
+            // Randomly select workers from all workers
             System.Random rand = new System.Random();
             int[] starvers = System.Linq.Enumerable.Range(0, allWorkers.Count)
                 .OrderBy(x => rand.Next())
                 .Take(starvingWorkers)
-                .OrderBy(x => x)
-                //.OrderByDescending(x => x)
                 .ToArray();
-            int workersOnFarm = workers[WorkSite.Farm].Count;
-            int workersOnPyramid = workers[WorkSite.Pyramid].Count;
+
+            // Starve them
             for (int i = 0; i < starvers.Length; i++)
             {
                 Worker worker = allWorkers[starvers[i]];
-                WorkSite site = worker.site;
-
-                //Worker worker = workers[site][starvers[i]];
                 worker.Hungry = true;
-                hungryWorkers.Add(worker);
             }
         }
         else if (starvingWorkers <= 0)
         {
             noFood = false;
-            for (int i = 0; i < hungryWorkers.Count; i++)
+            // No longer starve them
+            for (int i = 0; i < allWorkers.Count; i++)
             {
-                Worker worker = hungryWorkers[i];
+                Worker worker = allWorkers[i];
                 worker.Hungry = false;
             }
-
-            hungryWorkers.Clear();
         }
 
     }

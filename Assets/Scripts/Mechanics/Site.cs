@@ -48,7 +48,12 @@ public class Site : MonoBehaviour {
 
     public virtual Vector2 GetRandomPosition()
     {
-        return new Vector2(5, 5);
+        return new Vector2(0,0);
+    }
+
+    public List<Worker> GetWorkers()
+    {
+        return workers;
     }
 
     float ToFloat(bool value)
