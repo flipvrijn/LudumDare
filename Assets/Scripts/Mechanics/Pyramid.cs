@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PyramidBuild : Site {
+public class Pyramid : Site {
 
     public int currentLayer = 0;
     public float progressLayer = 0f;
@@ -43,7 +43,7 @@ public class PyramidBuild : Site {
         }
 	}
 
-    public static Vector2 GetRandomPosition()
+    public override Vector2 GetRandomPosition()
     {
         return new Vector2(Random.Range(3f, 6f), Random.Range(-1.5f, -3.5f));
     }

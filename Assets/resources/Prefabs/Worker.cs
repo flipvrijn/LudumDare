@@ -43,10 +43,10 @@ public class Worker : Observer {
         slept = false;
         sleepy = false;
         Hungry = false;
-
-        SetTargetPosition(new Vector2());
-
+        
         Register();
+
+        MoveToSite(WorkSite.Pyramid);
     }
 
     public override void Register()
@@ -104,15 +104,7 @@ public class Worker : Observer {
     public void MoveToSite(WorkSite site)
     {
         this.site = site;
-        if (site == WorkSite.Pyramid)
-        {
-            SetTargetPosition(PyramidBuild.GetRandomPosition());
-        }
-        else if(site == WorkSite.Farm)
-        {
-            SetTargetPosition(Farm.GetRandomPosition());
-        }
-        
+        SetTargetPosition(Site.Create(site).GetRandomPosition());
     }
 
     void MoveToTarget()

@@ -7,6 +7,7 @@ public enum WorkSite { Pyramid, Farm };
 public class Site : MonoBehaviour {
 
     private static Site instance;
+    private static Dictionary<WorkSite, Site> siteInstances;
 
     protected int numWorkers;
     protected List<Worker> workers;
@@ -16,7 +17,6 @@ public class Site : MonoBehaviour {
     {
         instance = this;
         workers = new List<Worker>();
-
     }
 
     public void Register(Worker worker)
@@ -48,6 +48,11 @@ public class Site : MonoBehaviour {
         return efficiency;
     }
 
+    public virtual Vector2 GetRandomPosition()
+    {
+        return new Vector2(5, 5);
+    }
+
     float ToFloat(bool value)
     {
         if (value)
@@ -75,15 +80,30 @@ public class Site : MonoBehaviour {
 
     public static Site Instance
     {
-      get 
-      {
-         if (instance == null)
-         {
+        get 
+        {
+            if (instance == null)
+            {
                 Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAH");
-            instance = new Site();
-         }
-         return instance;
-      }
-   }
+                instance = new Site();
+            }
+            return instance;
+        }
     }
+
+    public static Site Create(WorkSite worksite)
+    {
+        switch(worksite)
+        {
+            case WorkSite.Farm:
+                return GameObject.Find("Farm").GetComponent<Farm>();
+                break;
+            case WorkSite.Pyramid:
+                return GameObject.Find("Pyramid").GetComponent<Pyramid>();
+                break;
+        }
+
+        return null;
+    }
+
 }

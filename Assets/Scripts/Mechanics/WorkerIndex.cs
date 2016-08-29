@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-
-
 public class WorkerIndex : Publisher {
     
     private Dictionary<WorkSite, List<Worker>> workers;
@@ -33,6 +31,8 @@ public class WorkerIndex : Publisher {
 
         CreateWorkers(1, WorkSite.Pyramid);
         CreateWorkers(2, WorkSite.Farm);
+
+        Site.Create(WorkSite.Farm);
     }
 
     // Update is called once per frame
@@ -87,7 +87,7 @@ public class WorkerIndex : Publisher {
                 Worker worker = allWorkers[starvers[i]];
                 WorkSite site = worker.site;
 
-                Worker worker = workers[site][starvers[i]];
+                //Worker worker = workers[site][starvers[i]];
                 worker.Hungry = true;
                 hungryWorkers.Add(worker);
             }
@@ -124,10 +124,10 @@ public class WorkerIndex : Publisher {
             switch (site)
             {
                 case WorkSite.Farm:
-                    instance = CreateInstance(Farm.GetRandomPosition(), transform.rotation);
+                    instance = CreateInstance(Site.Create(WorkSite.Farm).GetRandomPosition(), transform.rotation);
                     break;
                 case WorkSite.Pyramid:
-                    instance = CreateInstance(PyramidBuild.GetRandomPosition(), transform.rotation);
+                    instance = CreateInstance(Site.Create(WorkSite.Farm).GetRandomPosition(), transform.rotation);
                     break;
             }
 

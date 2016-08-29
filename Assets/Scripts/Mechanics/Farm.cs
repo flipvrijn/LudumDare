@@ -16,7 +16,7 @@ public class Farm : Site {
 	
 	}
 
-    public static Vector2 GetRandomPosition()
+    public override Vector2 GetRandomPosition()
     {
         return new Vector2(Random.Range(-1, -5f), Random.Range(2f, 3f));
     }
