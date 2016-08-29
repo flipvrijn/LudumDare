@@ -6,7 +6,6 @@ public enum WorkSite { Pyramid, Farm };
 
 public class Site : MonoBehaviour {
 
-    private static Site instance;
     private static Dictionary<WorkSite, Site> siteInstances;
 
     protected int numWorkers;
@@ -15,7 +14,6 @@ public class Site : MonoBehaviour {
 
     protected virtual void Start()
     {
-        instance = this;
         workers = new List<Worker>();
     }
 
@@ -78,29 +76,15 @@ public class Site : MonoBehaviour {
 
     protected virtual void React() { }
 
-    public static Site Instance
-    {
-        get 
-        {
-            if (instance == null)
-            {
-                Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAH");
-                instance = new Site();
-            }
-            return instance;
-        }
-    }
-
     public static Site Create(WorkSite worksite)
     {
         switch(worksite)
         {
             case WorkSite.Farm:
                 return GameObject.Find("Farm").GetComponent<Farm>();
-                break;
+
             case WorkSite.Pyramid:
                 return GameObject.Find("Pyramid").GetComponent<Pyramid>();
-                break;
         }
 
         return null;

@@ -7,6 +7,7 @@ public class Pyramid : Site {
     public int currentLayer = 0;
     public float progressLayer = 0f;
     public float efficiency;
+    public float speed = 0.1f;
 
     SpriteRenderer[] layers;
 
@@ -25,7 +26,7 @@ public class Pyramid : Site {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-        efficiency = CalculateEfficiency();
+        efficiency = CalculateEfficiency() * speed;
 
         if (currentLayer < layers.Length)
         {

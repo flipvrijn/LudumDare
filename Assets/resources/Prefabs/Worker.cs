@@ -103,6 +103,11 @@ public class Worker : Observer {
 
     public void MoveToSite(WorkSite site)
     {
+        if (this.site != site)
+        {
+            Site.Create(this.site).Unregister(this);
+        }
+
         this.site = site;
         SetTargetPosition(Site.Create(site).GetRandomPosition());
     }
@@ -126,7 +131,7 @@ public class Worker : Observer {
         else
         {
             moving = false;
-            
+            Site.Create(site).Register(this);
         }
     }
 
