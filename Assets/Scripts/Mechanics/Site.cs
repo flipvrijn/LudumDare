@@ -2,11 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum WorkSite { Pyramid, Farm, Settlement };
+public enum WorkSite { Pyramid, Farm, Settlement }
 
 public class Site : MonoBehaviour {
-
-    private static Dictionary<WorkSite, Site> siteInstances;
 
     protected int numWorkers;
     public List<Worker> workers;
@@ -38,7 +36,8 @@ public class Site : MonoBehaviour {
         float efficiency = 0;
         foreach (Worker worker in workers)
         {
-            efficiency += (1f - (ToFloat(worker.hungry) * 0.2f) - (ToFloat(worker.sleepy) * 0.3f));
+            if (!worker.rebelling)
+                efficiency += (1f - (ToFloat(worker.hungry) * 0.2f) - (ToFloat(worker.sleepy) * 0.3f));
         }
         efficiency *= 0.01f;
 

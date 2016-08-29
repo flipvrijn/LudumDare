@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum RebelStrategy { TearDownPyramid }; //SlaughterWorkers
+
 public class Worker : Observer {
 
     public float _hp;
@@ -24,7 +26,6 @@ public class Worker : Observer {
     public WorkSite lastSite;
 
     public bool moving = false;
-    private Vector2? origin;
     private Vector2? targetPosition;
 
     /* Food stats */
@@ -41,16 +42,21 @@ public class Worker : Observer {
 
     /* Rebelling stats */
     public bool rebelling = false;
+    private bool hasRebelStrategy = false;
+    private bool rebelInPosition = false;
+    public RebelStrategy rebelStrategy;
 
     TimeCycle timeCycle;
+    WorkerIndex workerIndex;
 
     // Use this for initialization
     void Start () {
         timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
+        workerIndex = GameObject.Find("Manager").GetComponent<WorkerIndex>();
         
         Register();
 
-        MoveToSite(WorkSite.Pyramid);
+        //MoveToSite(WorkSite.Pyramid);
     }
 
     public override void Register()
@@ -130,12 +136,15 @@ public class Worker : Observer {
         }
 
         // Decide to rebel or not
-        if (happyness < 50f)
+        if (happyness < 50f || rebelling)
         {
-            if (Random.Range(0f, 10000 - happyness - timeCycle.speed) <= 2)
+            if (!rebelling && Random.Range(0f, 10000 - happyness - timeCycle.speed) <= 2)
             {
                 rebelling = true;
             }
+
+            if (rebelling)
+                Rebel();
         }
     }
 
@@ -164,7 +173,43 @@ public class Worker : Observer {
         happyness = 100 - 1.6f * hoursWithoutFood - 1.4f * hoursWithoutSleep - 1 / hp;
     }
 
-    public void MoveToSite(WorkSite site)
+    void Rebel()
+    {
+        // Choose a rebel strategy
+        if (!hasRebelStrategy)
+        {
+            System.Array strategies = System.Enum.GetValues(typeof(RebelStrategy));
+            System.Random rand = new System.Random();
+            rebelStrategy = (RebelStrategy)strategies.GetValue(rand.Next(strategies.Length));
+            hasRebelStrategy = true;
+        }
+
+        switch(rebelStrategy)
+        {
+            //case RebelStrategy.SlaughterWorkers:
+                // murder nearby workers
+               // break;
+            case RebelStrategy.TearDownPyramid:
+                // tear down pyramid
+                TearDownPyramid();
+                break;
+        }
+     }
+
+    void TearDownPyramid()
+    {
+        // Needs to move
+        if (!moving)
+        {
+            float posX = Random.Range(-4f, 0.65f);
+            float posY = -0.567f * posX - 2.829f;
+            Vector2 randPos = new Vector2(posX, posY);
+
+            MoveToSite(WorkSite.Pyramid, randPos);
+        }
+    }
+
+    public void MoveToSite(WorkSite site, Vector2? altPosition = null)
     {
         if (this.site != site)
         {
@@ -173,7 +218,11 @@ public class Worker : Observer {
         }
 
         this.site = site;
-        SetTargetPosition(Site.Create(site).GetRandomPosition());
+
+        if (altPosition.HasValue)
+            SetTargetPosition(altPosition.Value);
+        else
+            SetTargetPosition(Site.Create(site).GetRandomPosition());
     }
 
     void MoveToTarget()
@@ -208,10 +257,9 @@ public class Worker : Observer {
 
     void OnMouseDown()
     {
-        if (moving)
+        if (moving && !rebelling)
         {
             MoveToSite(lastSite);
-            Debug.Log("dsfjsi");
         }
     }
 }

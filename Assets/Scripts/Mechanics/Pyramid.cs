@@ -31,6 +31,15 @@ public class Pyramid : Site {
         if (currentLayer < layers.Length)
         {
             progressLayer += (float)efficiency;
+
+            int numDestroyingPyramid = 0;
+            foreach (Worker worker in workers)
+            {
+                if (worker.rebelStrategy == RebelStrategy.TearDownPyramid)
+                    numDestroyingPyramid++;
+            }
+            progressLayer -= numDestroyingPyramid * 0.0001f;
+
             if (progressLayer >= 1f)
             {
                 layers[currentLayer].color = new Color(1f, 1f, 1f, 1f);
@@ -42,6 +51,7 @@ public class Pyramid : Site {
                 layers[currentLayer].color = new Color(1f, 1f, 1f, progressLayer);
             }
         }
+       
 	}
 
     public override Vector2 GetRandomPosition()

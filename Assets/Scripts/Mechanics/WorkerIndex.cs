@@ -22,8 +22,6 @@ public class WorkerIndex : Publisher {
         supplies = GameObject.Find("Manager").GetComponent<Supplies>();
         
         CreateWorkers(3, WorkSite.Farm);
-
-        Site.Create(WorkSite.Farm);
     }
 
     // Update is called once per frame
@@ -56,8 +54,6 @@ public class WorkerIndex : Publisher {
                 .OrderBy(x => rand.Next())
                 .Take(starvingWorkers)
                 .ToArray();
-
-            Debug.Log(starvers);
 
             // Starve them
             for (int i = 0; i < starvers.Length; i++)
