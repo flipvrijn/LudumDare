@@ -14,8 +14,6 @@ public class Pyramid : Site {
 	// Use this for initialization
 	protected override void Start () {
         base.Start();
-
-        worksite = WorkSite.Pyramid;
         
         layers = GameObject.Find("Pyramid").GetComponentsInChildren<SpriteRenderer>();
         foreach (SpriteRenderer layer in layers)

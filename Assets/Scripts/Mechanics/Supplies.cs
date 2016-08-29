@@ -50,8 +50,6 @@ public class Supplies : Publisher {
 
             currentTick = 0;
         }
-        currentTick++;
-
-        
+        currentTick++;        
 	}
 }
