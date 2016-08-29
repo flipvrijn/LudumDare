@@ -48,27 +48,26 @@ public class WorkerIndex : Publisher {
         currentTick++;
     }
 
-    private List<Worker> DoDeathCheck()
+    private void DoDeathCheck()
     {
-        for (int i = 0; i < workers.Count; i++)
+        foreach (KeyValuePair<WorkSite, List<Worker>> entry in workers)
         {
-            Worker worker = workers[i];
-
-            if (worker.HP == 0)
+            foreach (Worker worker in entry.Value.ToList())
             {
-                Destroy(worker.gameObject);
-                workers.RemoveAt(i);
+                if (worker.HP == 0)
+                {
+                    Destroy(worker.gameObject);
+                    entry.Value.Remove(worker);
+                }
             }
         }
-
-        return workers;
     }
 
     private void DoHungerCheck()
     {
         int currentFood = (int)System.Math.Floor(supplies.food);
 
-        int starvingWorkers = workers.Count - currentFood;
+        int starvingWorkers = NumWorkers() - currentFood;
         if (starvingWorkers > 0 && !noFood)
         {
             noFood = true;
@@ -79,7 +78,7 @@ public class WorkerIndex : Publisher {
             int workersOnPyramid = workers[WorkSite.Pyramid].Count;
             for (int i = 0; i < starvers.Length; i++)
             {
-                WorkSite site = starvers[i] < workersOnFarm ? WorkSite.Farm : WorkSite.Pyramid;
+                WorkSite site = (starvers[i] < workersOnFarm) ? WorkSite.Farm : WorkSite.Pyramid;
 
                 Worker worker = workers[site][starvers[i]];
                 worker.Hungry = true;
@@ -185,6 +184,16 @@ public class WorkerIndex : Publisher {
     public int NumWorkersFarm()
     {
         return workers[WorkSite.Farm].Count;
+    }
+
+    public int NumWorkers()
+    {
+        int num = 0;
+        foreach (KeyValuePair<WorkSite, List<Worker>> entry in workers)
+        {
+            num += entry.Value.Count;
+        }
+        return num;
     }
 
     internal List<Worker> GetAllWorkers()
