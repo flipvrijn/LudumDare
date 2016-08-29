@@ -39,7 +39,7 @@ public class Site : MonoBehaviour {
         }
         efficiency *= 0.01f;
 
-        return 0f;
+        return efficiency;
     }
 
     float ToFloat(bool value)
@@ -61,7 +61,7 @@ public class Site : MonoBehaviour {
         Collider2D collider = GetComponent<Collider2D>();
         if (collider == Physics2D.OverlapPoint(mousePos))
         {
-            Debug.Log("clicked pyramid!");
+            React();
         }
     }
 
