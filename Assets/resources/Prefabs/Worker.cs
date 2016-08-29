@@ -35,13 +35,10 @@ public class Worker : Observer {
     public float SleepRate;
 
     TimeCycle timeCycle;
-    private int currentTick;
-    private int tickRate;
 
     // Use this for initialization
     void Start () {
         timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
-        tickRate = 100;
 
         slept = false;
         sleepy = false;

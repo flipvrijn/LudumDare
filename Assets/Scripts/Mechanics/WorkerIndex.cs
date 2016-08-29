@@ -67,18 +67,25 @@ public class WorkerIndex : Publisher {
     {
         int currentFood = (int)System.Math.Floor(supplies.food);
 
-        int starvingWorkers = NumWorkers() - currentFood;
+        List<Worker> allWorkers = GetAllWorkers();
+        int starvingWorkers = allWorkers.Count - currentFood;
         if (starvingWorkers > 0 && !noFood)
         {
             noFood = true;
 
             System.Random rand = new System.Random();
-            int[] starvers = System.Linq.Enumerable.Range(0, starvingWorkers).OrderBy(x => rand.Next()).Take(20).OrderByDescending(x => x).ToArray();
+            int[] starvers = System.Linq.Enumerable.Range(0, allWorkers.Count)
+                .OrderBy(x => rand.Next())
+                .Take(starvingWorkers)
+                .OrderBy(x => x)
+                //.OrderByDescending(x => x)
+                .ToArray();
             int workersOnFarm = workers[WorkSite.Farm].Count;
             int workersOnPyramid = workers[WorkSite.Pyramid].Count;
             for (int i = 0; i < starvers.Length; i++)
             {
-                WorkSite site = (starvers[i] < workersOnFarm) ? WorkSite.Farm : WorkSite.Pyramid;
+                Worker worker = allWorkers[starvers[i]];
+                WorkSite site = worker.site;
 
                 Worker worker = workers[site][starvers[i]];
                 worker.Hungry = true;
@@ -186,21 +193,13 @@ public class WorkerIndex : Publisher {
         return workers[WorkSite.Farm].Count;
     }
 
-    public int NumWorkers()
-    {
-        int num = 0;
-        foreach (KeyValuePair<WorkSite, List<Worker>> entry in workers)
-        {
-            num += entry.Value.Count;
-        }
-        return num;
-    }
-
     internal List<Worker> GetAllWorkers()
     {
         List<Worker> allWorkers = new List<Worker>();
-        allWorkers.AddRange(workers[WorkSite.Farm]);
-        allWorkers.AddRange(workers[WorkSite.Pyramid]);
+        foreach (KeyValuePair<WorkSite, List<Worker>> entry in workers)
+        {
+            allWorkers.AddRange(entry.Value);
+        }
 
         return allWorkers;
     }
