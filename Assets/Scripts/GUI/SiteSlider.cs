@@ -39,7 +39,6 @@ public class SiteSlider : Slider {
     {
         if(!selected)
         {
-            Debug.Log(workers.numWorkers + " " + worksite.workers.Count);
             maxValue = workers.numWorkers;
             value = worksite.workers.Count;
             text.text = value.ToString();

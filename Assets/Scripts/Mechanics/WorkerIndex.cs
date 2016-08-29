@@ -20,9 +20,10 @@ public class WorkerIndex : Publisher {
         noFood = false;
 
         supplies = GameObject.Find("Manager").GetComponent<Supplies>();
-        
+
         CreateWorkers(3, WorkSite.Farm);
     }
+
 
     // Update is called once per frame
     void FixedUpdate() {
@@ -87,48 +88,57 @@ public class WorkerIndex : Publisher {
 
     public void CreateWorker()
     {
-        numWorkers++;
-        GameObject instance = CreateInstance(Site.Create(WorkSite.Settlement).GetRandomPosition(), transform.rotation);
-        Worker worker = instance.GetComponent<Worker>();
-        worker.hp = 100;
-        worker.speed = Random.Range(0.2f, 0.5f);
-        worker.foodConsumption = Random.Range(0.01f, 0.5f);
-        worker.site = WorkSite.Settlement;
-        Site.Create(WorkSite.Settlement).Register(worker);
-        worker.MoveToSite(WorkSite.Pyramid);
-        Notify(this);
-    }
-
-    public void CreateWorkers(int num, WorkSite site)
-    {
-        numWorkers += num;
-        
-        Site worksite = Site.Create(site);
-        for (int i = 0; i < num; i++)
+        if(supplies.food >= 1)
         {
-            GameObject instance = null;
-            switch (site)
-            {
-                case WorkSite.Farm:
-                    instance = CreateInstance(Site.Create(WorkSite.Farm).GetRandomPosition(), transform.rotation);
-                    break;
-                case WorkSite.Pyramid:
-                    instance = CreateInstance(Site.Create(WorkSite.Pyramid).GetRandomPosition(), transform.rotation);
-                    break;
-                case WorkSite.Settlement:
-                    instance = CreateInstance(Site.Create(WorkSite.Settlement).GetRandomPosition(), transform.rotation);
-                    break;
-            }
-
+            supplies.DecreaseFood(1);
+            numWorkers++;
+            GameObject instance = CreateInstance(Site.Create(WorkSite.Settlement).GetRandomPosition(), transform.rotation);
             Worker worker = instance.GetComponent<Worker>();
             worker.hp = 100;
             worker.speed = Random.Range(0.2f, 0.5f);
             worker.foodConsumption = Random.Range(0.01f, 0.5f);
-            worker.site = site;
-            worksite.Register(worker);
+            worker.site = WorkSite.Settlement;
+            Site.Create(WorkSite.Settlement).Register(worker);
+            worker.MoveToSite(WorkSite.Pyramid);
+            Notify(this);
+        }
+
+    }
+
+    public void CreateWorkers(int num, WorkSite site)
+    {
+        if (supplies.food >= num)
+        {
+            numWorkers += num;
+            supplies.DecreaseFood(num);
+
+            Site worksite = Site.Create(site);
+            for (int i = 0; i < num; i++)
+            {
+                GameObject instance = null;
+                switch (site)
+                {
+                    case WorkSite.Farm:
+                        instance = CreateInstance(Site.Create(WorkSite.Farm).GetRandomPosition(), transform.rotation);
+                        break;
+                    case WorkSite.Pyramid:
+                        instance = CreateInstance(Site.Create(WorkSite.Pyramid).GetRandomPosition(), transform.rotation);
+                        break;
+                    case WorkSite.Settlement:
+                        instance = CreateInstance(Site.Create(WorkSite.Settlement).GetRandomPosition(), transform.rotation);
+                        break;
+                }
+
+                Worker worker = instance.GetComponent<Worker>();
+                worker.hp = 100;
+                worker.speed = Random.Range(0.2f, 0.5f);
+                worker.foodConsumption = Random.Range(0.01f, 0.5f);
+                worker.site = site;
+                worksite.Register(worker);
+            }
+            Notify(this);
         }
         
-        Notify(this);
     }    
 
     public List<Worker> GetAllWorkers()

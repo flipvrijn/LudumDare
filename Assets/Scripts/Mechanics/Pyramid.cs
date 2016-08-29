@@ -40,6 +40,7 @@ public class Pyramid : Site {
                 if (worker.rebelStrategy == RebelStrategy.TearDownPyramid)
                     numDestroyingPyramid++;
             }
+            Debug.Log(numDestroyingPyramid);
             progressLayer -= numDestroyingPyramid * 0.0001f;
 
             if (progressLayer >= 1f)
@@ -47,6 +48,10 @@ public class Pyramid : Site {
                 layers[currentLayer].color = new Color(1f, 1f, 1f, 1f);
                 currentLayer += 1;
                 progressLayer = 0f;
+            }
+            else if (progressLayer < 0f)
+            {
+
             }
             else
             {

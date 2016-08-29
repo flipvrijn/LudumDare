@@ -45,6 +45,8 @@ public class Worker : Observer {
     private bool hasRebelStrategy = false;
     private bool rebelInPosition = false;
     public RebelStrategy rebelStrategy;
+    GameObject fire;
+    int fireSize;
 
     TimeCycle timeCycle;
     WorkerIndex workerIndex;
@@ -53,6 +55,9 @@ public class Worker : Observer {
     void Start () {
         timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
         workerIndex = GameObject.Find("Manager").GetComponent<WorkerIndex>();
+
+        fire = transform.GetChild(0).gameObject;
+        fire.SetActive(false);
         
         Register();
 
@@ -138,7 +143,7 @@ public class Worker : Observer {
         // Decide to rebel or not
         if (happyness < 50f || rebelling)
         {
-            if (!rebelling && Random.Range(0f, 10000 - happyness - timeCycle.speed) <= 2)
+            if (!rebelling && Random.Range(0f, 1000 - happyness - timeCycle.speed) <= 2)
             {
                 rebelling = true;
             }
@@ -175,9 +180,13 @@ public class Worker : Observer {
 
     void Rebel()
     {
+        
         // Choose a rebel strategy
         if (!hasRebelStrategy)
         {
+            fire.SetActive(true);
+            fireSize = 3;
+            fire.transform.localScale = new Vector3(.3f, .3f, 1f);
             System.Array strategies = System.Enum.GetValues(typeof(RebelStrategy));
             System.Random rand = new System.Random();
             rebelStrategy = (RebelStrategy)strategies.GetValue(rand.Next(strategies.Length));
@@ -261,6 +270,21 @@ public class Worker : Observer {
         if (moving && !rebelling)
         {
             MoveToSite(lastSite);
+        }
+        else if (rebelling)
+        {
+            fireSize -= 1;
+            fire.transform.localScale = new Vector3((float)fireSize/10, (float)fireSize/10, 1f);
+
+            Debug.Log(fireSize);
+
+            if (fireSize == 0)
+            {
+                rebelling = false;
+                fireSize = 3;
+                hasRebelStrategy = false;
+                MoveToSite(lastSite);
+            }
         }
     }
 }
