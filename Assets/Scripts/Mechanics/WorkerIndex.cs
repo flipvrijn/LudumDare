@@ -89,6 +89,20 @@ public class WorkerIndex : Publisher {
         return instance;
     }
 
+    public void CreateWorker()
+    {
+        numWorkers++;
+        GameObject instance = CreateInstance(Site.Create(WorkSite.Settlement).GetRandomPosition(), transform.rotation);
+        Worker worker = instance.GetComponent<Worker>();
+        worker.hp = 100;
+        worker.speed = Random.Range(0.2f, 0.5f);
+        worker.foodConsumption = Random.Range(0.01f, 0.5f);
+        worker.site = WorkSite.Settlement;
+        Site.Create(WorkSite.Settlement).Register(worker);
+        worker.MoveToSite(WorkSite.Pyramid);
+        Notify(this);
+    }
+
     public void CreateWorkers(int num, WorkSite site)
     {
         numWorkers += num;
