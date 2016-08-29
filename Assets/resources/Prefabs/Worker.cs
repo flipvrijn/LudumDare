@@ -19,6 +19,7 @@ public class Worker : Observer {
 
     /* Movement related */
     public WorkSite site;
+
     public bool moving = false;
     private Vector2? origin;
     private Vector2? targetPosition;
@@ -29,7 +30,7 @@ public class Worker : Observer {
     public int HoursWithoutFood;
 
     /* Sleep stats */
-    public bool slept;
+    public bool sleeping;
     public bool sleepy;
     public float sleepyness;
     public float SleepRate;
@@ -40,7 +41,6 @@ public class Worker : Observer {
     void Start () {
         timeCycle = GameObject.Find("Manager").GetComponent<TimeCycle>();
 
-        slept = false;
         sleepy = false;
         Hungry = false;
         
@@ -56,17 +56,34 @@ public class Worker : Observer {
 
     public override void Publish(Publisher publisher)
     {
-        // Sleepyness ticking every hour
-        sleepyness += 0.5f;
-        if (sleepyness > 10f)
+        if (!sleeping)
         {
-            sleepyness = 10f;
+            sleepyness += 0.5f;
+            if (sleepyness >= 10f)
+            {
+                sleepyness = 10f;
+                sleepy = true;
+            }
         }
+        // Sleepyness ticking every hour
 
         // Starvation ticking every hour
         if (Hungry)
         {
             HP -= FoodConsumption * 10;
+        }
+    }
+
+    public void Sleep()
+    {
+        sleeping = true;
+        sleepyness -= 0.01f;
+        if (sleepyness <= 0)
+        {
+            sleepyness = 0;
+            sleeping = false;
+            sleepy = false;
+            MoveToSite(WorkSite.Pyramid);
         }
     }
 
@@ -79,7 +96,16 @@ public class Worker : Observer {
 
             MoveToTarget();
         }
-        SenseTheSleep();
+        
+        if (site != WorkSite.Settlement && sleepy)
+        {
+            GoToBed();
+        }
+    }
+
+    void GoToBed()
+    {
+        MoveToSite(WorkSite.Settlement);
     }
 
     void Pause()
@@ -91,14 +117,6 @@ public class Worker : Observer {
     {
         this.targetPosition = targetPos;
         moving = true;
-    }
-
-    void SenseTheSleep()
-    {
-        if (sleepyness >= 10)
-        {
-            sleepy = true;
-        }
     }
 
     public void MoveToSite(WorkSite site)
@@ -116,7 +134,7 @@ public class Worker : Observer {
     {
         Vector2 currentPosition = new Vector2(this.transform.position.x, this.transform.position.y);
 
-        if (Vector2.Distance(currentPosition, targetPosition.Value) > 0.1f)
+        if (moving && Vector2.Distance(currentPosition, targetPosition.Value) > 0.4f)
         {
             Vector2 directionOfTravel = targetPosition.Value - currentPosition;
             directionOfTravel.Normalize();
@@ -130,6 +148,8 @@ public class Worker : Observer {
         }
         else
         {
+            Debug.Log("Register " + moving.ToString() + site.ToString() + targetPosition.Value.ToString());
+            targetPosition = null;
             moving = false;
             Site.Create(site).Register(this);
         }

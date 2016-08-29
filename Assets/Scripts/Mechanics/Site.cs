@@ -2,15 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum WorkSite { Pyramid, Farm };
+public enum WorkSite { Pyramid, Farm, Settlement };
 
 public class Site : MonoBehaviour {
 
     private static Dictionary<WorkSite, Site> siteInstances;
 
     protected int numWorkers;
-    protected List<Worker> workers;
-    protected WorkSite worksite;
+    public List<Worker> workers;
 
     protected virtual void Start()
     {
@@ -85,9 +84,13 @@ public class Site : MonoBehaviour {
 
             case WorkSite.Pyramid:
                 return GameObject.Find("Pyramid").GetComponent<Pyramid>();
-        }
 
-        return null;
+            case WorkSite.Settlement:
+                return GameObject.Find("Settlement").GetComponent<Settlement>();
+
+            default:
+                return null;
+        }
     }
 
 }
