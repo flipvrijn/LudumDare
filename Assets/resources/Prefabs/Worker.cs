@@ -101,6 +101,20 @@ public class Worker : Observer {
         }
     }
 
+    public void MoveToSite(WorkSite site)
+    {
+        this.site = site;
+        if (site == WorkSite.Pyramid)
+        {
+            SetTargetPosition(PyramidBuild.GetRandomPosition());
+        }
+        else if(site == WorkSite.Farm)
+        {
+            SetTargetPosition(Farm.GetRandomPosition());
+        }
+        
+    }
+
     void MoveToTarget()
     {
         Vector2 currentPosition = new Vector2(this.transform.position.x, this.transform.position.y);
@@ -120,6 +134,7 @@ public class Worker : Observer {
         else
         {
             moving = false;
+            
         }
     }
 

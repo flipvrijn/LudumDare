@@ -2,13 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum WorkSite { Pyramid, Farm };
+
 public class Site : MonoBehaviour {
+
+    private static Site instance;
 
     protected int numWorkers;
     protected List<Worker> workers;
+    protected WorkSite worksite;
 
     protected virtual void Start()
     {
+        instance = this;
         workers = new List<Worker>();
 
     }
@@ -66,4 +72,18 @@ public class Site : MonoBehaviour {
     }
 
     protected virtual void React() { }
+
+    public static Site Instance
+    {
+      get 
+      {
+         if (instance == null)
+         {
+                Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAH");
+            instance = new Site();
+         }
+         return instance;
+      }
+   }
+    }
 }

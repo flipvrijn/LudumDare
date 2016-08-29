@@ -7,12 +7,18 @@ public class Farm : Site {
     // Use this for initialization
     protected override void Start() {
         base.Start();
-        
+
+        worksite = WorkSite.Farm;
     }
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+    public static Vector2 GetRandomPosition()
+    {
+        return new Vector2(Random.Range(-1, -5f), Random.Range(2f, 3f));
+    }
 
 }

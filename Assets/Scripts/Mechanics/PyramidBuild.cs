@@ -6,12 +6,15 @@ public class PyramidBuild : Site {
 
     public int currentLayer = 0;
     public float progressLayer = 0f;
+    public float efficiency;
 
     SpriteRenderer[] layers;
 
 	// Use this for initialization
 	protected override void Start () {
         base.Start();
+
+        worksite = WorkSite.Pyramid;
         
         layers = GameObject.Find("Pyramid").GetComponentsInChildren<SpriteRenderer>();
         foreach (SpriteRenderer layer in layers)
@@ -22,7 +25,7 @@ public class PyramidBuild : Site {
 
 	// Update is called once per frame
 	void FixedUpdate () {
-        float efficiency = CalculateEfficiency();
+        efficiency = CalculateEfficiency();
 
         if (currentLayer < layers.Length)
         {
@@ -39,5 +42,10 @@ public class PyramidBuild : Site {
             }
         }
 	}
+
+    public static Vector2 GetRandomPosition()
+    {
+        return new Vector2(Random.Range(3f, 6f), Random.Range(-1.5f, -3.5f));
+    }
 
 }
